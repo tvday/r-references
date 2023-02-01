@@ -1,0 +1,516 @@
+% !Rnw root = AABase.Rnw
+
+\chapter{Data Exploration Example - Titanic}
+
+\begin{flushright}
+\texttt{In God We Trust; All Others Must Bring Data}
+
+\emph{-- Willian Edwards Deming}
+\end{flushright}
+
+\vspace{12pt}
+
+<<>>=
+# TO567 Data Mining Week 1
+# Exploring data using R
+# Example: Titanic
+
+
+#========================================================
+#
+#Task 1. Data Loading Part 
+#
+#========================================================
+
+# First, set the working directory. 
+# Make sure that titanic data file is in the same folder as this script file. 
+# Session -> Set Working Directory -> To the source file location 
+# getwd() for checking the working directory location
+getwd()
+
+# Read the file and store the data in an object called titanic 
+
+#read.csv("filename.csv") for reading a CSV file into R
+titanic <- read.csv("datasets/titanic.csv")
+
+# Note that we read the data into a dataframe named titanic
+
+
+#========================================================
+#
+#Task 2. Seeing the data  
+#
+#========================================================
+
+#titanic will show you the entire data. 
+#head allows you to preview first 5-6 entries of the data. 
+#tali allows you to preview last 5-6 entries of the data 
+#
+# titanic
+head(titanic)
+tail(titanic)
+
+# str() shows the data type of each column
+str(titanic)
+
+# View() or fix() opens a data viewer 
+# Not recommended. You should get out of the habit of
+# watching your data like you are a primitive Excel user!
+# View(titanic)
+# fix(titanic)
+
+
+# names(data) or colnames shows you the column titles. 
+# nrow(data), ncol(data), dim(data) show the size of the data 
+# is.data.frame(data) answers whether data is stored in a data frame. 
+
+# Try the follwing commands and see what happens.  
+
+# names(titanic)
+# colnames(titanic)
+# nrow(titanic)
+# ncol(titanic)
+# dim(titanic)
+# is.data.frame(titanic)
+
+
+#========================================================
+#
+#Task 3. Summarize and tabulate the data 
+#
+#========================================================
+
+
+# Let's summarize entire data set 
+# summary(titanic)
+
+
+# Getting information about a particular column 
+# We can use "titanic$Survived" to refer to the "Survived" column of "titanic" data frame. 
+
+# Example - let's do a summary of the Survived column of titanic data frame
+# summary(titanic$Survived)
+
+
+
+# Tabulate the data 
+# The "table" function will then go through the column and count the occurrence of each value (in this case how many times 0s and 1s occurred in the "Survived" column, with 0 corresponding to a passenger who died and 1 corresponding to a passenger who survived)
+# try summary() and table() 
+# see what these functions generate. 
+
+titanic$Survived
+summary(titanic$Survived)
+table(titanic$Survived)
+
+# The function prop.table will convert the table to proportions.
+prop.table(table(titanic$Survived))
+
+# We can round the proportion table to 3 decimal points. 
+round(prop.table(table(titanic$Survived)), digits = 3)
+
+
+#######################################################################################
+#
+# Excercise: Repeat this for titanic$Sex 
+# The function "summary" summarizes the information contained in this argument. Let us summarize the information in the Sex column, which shows each passenger's gender.
+# Do the same thing for the variable sex -- titanic$sex 
+# 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#########################################################################################
+# Answers 
+# titanic$Sex
+# summary(titanic$Sex)
+# table(titanic$Sex)
+# prop.table(table(titanic$Sex))
+# round(prop.table(table(titanic$Sex)), digits = 3)
+
+
+
+#Question: How come summary(titanic$Sex) shows counts but summary(titanic$Survived) does not? 
+#Data type: Sex is stored as a factor (categorical variable), Survived is sotred as a number. 
+str(titanic)
+
+
+
+#========================================================
+#
+#Task 4. Create a 2 dimensional contingency table  
+#
+#========================================================
+
+# We can also create a multi dimensional table, say a table that distributes the passengers according to their gender and whether they survived or not.
+
+# Create a 2 by 2 table (Sex, Survived) 
+# Then, let's convert the numbers into proportions.
+# 
+# table(titanic$Sex, titanic$Survived) 
+# prop.table(table(titanic$Sex, titanic$Survived))
+# Round to 3 decimal places 
+
+table(titanic$Sex, titanic$Survived)
+table1 <-  prop.table(table(titanic$Sex, titanic$Survived))
+round(table1, 3)
+
+# Let's use prop.table so that the proportions add up to 100% in each row. 
+# Round the results to 3 decimal places 
+
+table2 <- prop.table(table(titanic$Sex, titanic$Survived),1) #1: each row adds up to 1. 
+round(table2, 3)
+ 
+table3 <- prop.table(table(titanic$Sex, titanic$Survived),2) #2: each column adds up to 1. 
+round(table3, 3)
+
+
+
+
+#######################################################################################
+#
+# Excercise: Create tables for titanic$PClass and titanic$Survived
+# 1. Create count tables (Pclass, Survived)
+# 2. Create a proportion table 
+# 3. Modify a proportion table so that each row adds up to 1. 
+# 4. Modify a proportion table so that each column adds up to 1.
+
+
+
+
+
+
+
+
+
+
+
+
+#######################################################################################
+# Answers 
+# table(titanic$Pclass, titanic$Survived)
+# round(prop.table(table(titanic$Pclass, titanic$Survived)),3)
+# 
+# round(prop.table(table(titanic$Pclass, titanic$Survived), 1),3)  #1: each row adds up to 1. 
+# round(prop.table(table(titanic$Pclass, titanic$Survived), 2),3)  #2: each column adds up to 1. 
+
+
+
+
+
+
+
+#========================================================
+#
+#Task 5. Histogram  
+#
+#========================================================
+
+# Now, let us summarize the information in the Age column.
+
+summary(titanic$Age)
+
+# Let's draw a histogram of age distribution 
+
+hist(titanic$Age)
+hist(titanic$Age, xlab="Age", ylab="# of people",  main = "Histogram of Age", breaks =12)
+hist(titanic$Age, xlab="Age", ylab="# of people",  main = "Histogram of Age", breaks=seq(0,90,by=15))
+
+
+#######################################################################################
+# Exercise 
+# 1. Summarize titanic$Fare 
+# 2. Draw a histogram of $Fare 
+# 3. Draw a histogram of $Fare with 12 break points 
+# 4. Draw a histogram of $Fare with breaks = seq(0,1000,by 50)
+
+
+
+
+
+
+
+
+#######################################################################################
+# Answers  
+# summary(titanic$Fare)
+# hist(titanic$Fare)
+# hist(titanic$Fare, xlab="Fare", ylab="# of people", col="red", main = "Histogram of Fare", breaks =12)
+# hist(titanic$Fare, xlab="Fare", ylab="# of people", col="red", main = "Histogram of Fare", breaks=seq(0,1000,by=50))
+
+
+
+
+
+
+
+
+
+
+
+#========================================================
+#
+#Task 6. Adding a column (new variables)   
+#
+#========================================================
+
+# We will add another column to our data frame. 
+# This column will be titled "Child" and it will be equal to 1 if the passenger is less than 18 years old and 0 otherwise.
+
+
+
+titanic$Child <- 0 #Default value = 0 
+titanic$Child[titanic$Age<18] <- 1 #Change the value to 1 if Age< 18 
+titanic$Child
+
+
+
+#######################################################################################
+# Exercise 
+#  
+# You will add a column called FClass whose value is 1 if the passenger is in the first class and 0 otherwise. 
+
+
+
+
+
+
+
+
+#######################################################################################
+# Answers 
+# titanic$FClass <- 0 
+# titanic$FClass[titanic$Pclass == 1] <- 1
+# titanic$FClass
+
+
+
+
+
+
+
+
+
+
+
+#========================================================
+#
+#Task 7. aggregate() and barplot()   
+#
+#========================================================
+
+
+# We will use "aggregate" function to count how many passengers survived, grouped by their Sex and whether or not they were children.  
+
+# The "aggregate" function divides the data into groups according to the variable to the right of "~" and applies the same  "function" to the variable to the left of "~". 
+# In this case, it will add the numbers (0s and 1s in the Survived column) for four different groups of passengers: Male children, female children, male adults, female adults.
+
+# aggregate(Survived ~ Child, data=titanic, sum)
+# This means that R will sum Survived column for two subgroups Child=1 or Child =0 
+
+# aggregate(Survived ~ Child + Sex, data=titanic, sum)
+# This means that R will sum the values in Survived and show the results grouped by Child (0 or 1) and Sex (male, female).
+
+aggregate(Survived ~ Child, data=titanic, sum)
+aggregate(Survived ~ Child, data=titanic, mean)
+
+aggregate(Survived ~ Child + Sex, data=titanic, sum)
+aggregate(Survived ~ Child + Sex, data=titanic, mean)
+
+#Above statement is the same as 
+# aggregate(titanic$Survived, list(Child = titanic$Child, Sex= titanic$Sex), sum)
+# aggregate(titanic$Survived, list(Child = titanic$Child, Sex= titanic$Sex), mean)
+
+
+
+
+
+# We will use "aggregate" function again, this time to count how many passengers belong to each of the four different groups (male children, female children, male adults, female adults). We can achieve that by setting "FUN = length".
+
+# Note that legnth measures how many people are in each subgroup (regardless of their survivals) (grouped by Child and Sex)
+# sum measures the number of people survived. 
+# mean  will be the sample proportion of each category 
+
+# If you do length, it just counts the number of observations in the survived columns for each group,
+# not the number of people survived. 
+
+aggregate(Survived ~ Child + Sex, data=titanic, length)
+
+# Since Survived = 1 or 0, if you use sum, it counts the number of people survived for each group. 
+# The number of people survived 
+aggregate(Survived ~ Child + Sex, data=titanic, sum)
+
+# Proportion of people survived 
+temp_t <- aggregate(Survived ~ Child + Sex, data=titanic, mean)
+temp_t
+temp_t$Survived <- round(temp_t$Survived,3)
+temp_t
+
+
+
+#######################################################################################
+# Exercise 
+#  
+# 1. Aggregate and compute the sum of Fare,  grouped by Child (0 or 1) 
+# 2. Aggregate and compute the average of Fare by Child and Sex 
+
+
+
+
+
+
+
+#######################################################################################
+# Answer  
+#  
+# aggregate(Fare ~ Child, data=titanic, sum)
+# aggregate(Fare ~ Child + Sex, data=titanic, mean)
+
+
+
+
+
+
+#========================================================
+#
+#Task 7. aggregate() and barplot()   
+#
+#========================================================
+
+# Finally, we check how passengers did when we group them according to PClass, and Sex. We use the "aggregate" function again.
+
+# Do the following 
+
+breakdown <- aggregate(Survived ~ Pclass + Sex, data=titanic, mean)
+
+# Observe 
+breakdown
+colnames(breakdown)
+barplot(breakdown$Survived, col=breakdown$Pclass)
+
+
+# Add a label to each bar using names.arg 
+
+barplot(breakdown$Survived, col=breakdown$Pclass, names.arg = c("1-F", "2-F", "3-F", "1-M", "2-M", "3-M"), border =TRUE, axes= TRUE)
+# Next week, you will learn how to enhance a graph as above. 
+
+# Change the y-axis to (0,1) using ylim = c(0,1)
+barplot(breakdown$Survived, col=breakdown$Pclass, names.arg = c("1-F", "2-F", "3-F", "1-M", "2-M", "3-M"), border =TRUE, axes= TRUE, ylim=c(0,1))
+
+
+
+
+#######################################################################################
+# Exercise 
+#
+# We want to examine how survials are related to fares. 
+# Since Fare is a continuous variable, aggreate(Survived ~ Fare, data=titanic, mean) is not useful
+# To see this, try 
+
+aggregate(Survived ~ Fare + Sex, data=titanic,mean)
+
+
+# Instead, 
+# we add a new column to our data frame, called "Fare2", to indicate how expensive the fare was for each passenger. 
+# We will group them into four: 
+#           those who paid $30+, 
+#           between 20 and 30, 
+#           between 10 and 20, 
+#           and less than 10.
+
+titanic$Fare2<-"30+" #default 
+titanic$Fare2[titanic$Fare < 30 & titanic$Fare >= 20] <- "20-30"
+titanic$Fare2[titanic$Fare < 20 & titanic$Fare >= 10] <- "10-20"
+titanic$Fare2[titanic$Fare < 10] <- "<10"
+
+
+# Now Create a breakdown2:  
+# breakdown2 <- aggregate(Survived ~ Fare2 + Sex, data=titanic,mean)
+
+
+
+
+# Draw a barplot of breakdown2$Survived
+
+
+
+# Try this and see the changes   
+barplot(breakdown2$Survived, col=breakdown2$Sex,  names.arg =rownames(breakdown2), legend =rownames(breakdown2))
+ 
+
+# Try the following and see what has changed. 
+ barplot(breakdown2$Survived, col=breakdown2$Sex, legend =rownames(breakdown2) , names.arg =paste(breakdown2$Fare2,breakdown2$Sex))
+
+
+
+
+#========================================================
+#
+#Task 8. Scatter plot, Correlation, Boxplot   
+#
+#========================================================
+
+str(titanic)
+
+#Scatter plot plot(X,Y) or plot(Y~X, data)
+plot(titanic$Age,titanic$Fare,col="black")
+plot(Fare~Age, data=titanic,col="black")
+cor(titanic$Fare,titanic$Age, use="complete.obs")
+#Some observations are missing: use="complete.obs"
+
+#Boxplot of Fare grouped by Class 
+boxplot(Fare~Pclass,data=titanic)
+
+
+#######################################################################################
+# Exercise 
+#
+# We want to examine how survials are related to fares. 
+# Since Fare is a continuous variable, aggreate(Survived ~ Fare, data=titanic, mean) is not useful
+# To see this, try 
+
+
+# 1. Draw a scatter plot X: Fare, Y: Survived 
+# 2. Compute the correlation between Fare and Survived  
+# 3. Boxplot of Fare grouped by Survived  
+
+
+
+
+
+
+
+
+
+
+
+#######################################################################################
+# Answers 
+# plot(titanic$Fare,titanic$Survived,col="black")
+# plot(Survived~Fare, data=titanic,col="black")
+# cor(titanic$Fare,titanic$Survived, use="complete.obs")
+# Some observations are missing: use="complete.obs"
+# boxplot(Fare~Survived,data=titanic)
+
+
+
+# Now answers the questions in the class note. 
+
+
+
+
+
+@
+
