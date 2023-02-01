@@ -1,0 +1,169 @@
+---
+title: "Reference Documentation"
+author: "Thomas Day"
+date: "`r Sys.Date()`"
+output: 
+  html_document :
+   toc : true
+   toc_float : true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Basics
+
+## R Projects
+
+It's a good idea to work within R projects. R projects allow an efficient way to group your data and code in one place. To create an R project, click "New Project" from the File drop down menu. Select "New Directory" (unless you have an existing one made) and and choose a name for the new folder. This will create new folder with that name and set your working directory to it. You will also notice it created a .Rpoj file of the same name. This file is a shortcut to open RStudio to that project. Rproject directories will also save your history of executed commands, so you can go look back if your ever need to.
+
+### Session Data
+
+When you run code in the R terminal, all your data will be saved in the environment. This allows you to access and use previously created variables.
+It is a good idea to start each session clean. You will notice that when you exit, R will ask if you want to save a workspace image. You should click "no." 
+
+To stop R from restoring old data:
+
+- Go to `Tools` drop down menu
+
+- Click `Global Options`
+
+- `General` under the `Basic` tab, uncheck "Restore .RData into workspace at startup"
+
+Why?
+
+- To facilitate better code, since you'll have to rerun it
+
+- To clear up unused objects to save storage and stop confusion on what's important
+
+
+## Variables and Assignment
+
+Variables store information. You can create a variable by assigning a value to it using the assignment operator: `<-`.
+Using the assignment operator again will overwrite the previous value. You can print a variable using the print function, or just having it on a line by itself.
+
+**Tip** Use descriptive names for your variables and avoid using key words or names of functions.
+
+```{r}
+# creating a variable and assigning a string to it
+my_variable <- 'my value'
+my_variable
+# assigning a new value to the variable
+my_variable <- 'new value'
+my_variable
+
+# creating a variable and assigning a number to it 
+another_variable <- 123
+another_variable
+```
+
+### Vectors
+
+In R, all basic variables are vectors. The variables we created above were all vectors of length one. We can create longer vectors using the function`c()`
+
+```{r}
+# a vector of length 9
+my_vector <- c(1, 2, 3, 4, 5, 6, 7, 8, 9)
+my_vector
+
+# a vector of length 2
+another_vector <- c('val1', 'val2')
+another_vector
+```
+
+You can access elements of the vector using square bracket notation `[ ]`. Vectors in R are 1-indexed, meaning the first element is index 1.
+
+```{r}
+# accessing the 3rd element
+my_vector[3]
+
+# assigning a new value to the 8th element
+my_vector[8] <- 10
+
+# accessing everything but the 4th element
+my_vector[-4]
+
+# accessing the 3rd to 7th element and everything in between
+my_vector[3:7]
+```
+
+
+### Data Types
+
+The data types you should be familiar with:
+
+- `numeric` stores number like values: 10, 9.5, -33
+
+- `character` stores words, also known as a string: "R", "programming"
+
+- `logical` stores Boolean data: TRUE, FALSE
+
+- `factor` stores categorical data, also known as enumerated types: "high", "Medium", "low"
+
+#### Factors
+
+You can convert a variable to a factor by using the command `as.factor()`
+
+```{r}
+var <- c('high', 'med', 'low')
+# var is currently of character type
+class(var)
+
+var <- as.factor(var)
+# now it is a factor type
+class(var)
+var
+```
+
+Sometimes you will have numeric values that would make more sense as factor value. The rule of thumb is to consider if adding two values "makes sense." For example, you can have a variable called rank with the values 1, 2, and 3. Does rank 1 + rank 2 = rank 3? No, that doesn't make sense. So this should be a factor. Each number represents a different idea.
+
+For characters, it can sometimes be trickier. The rule of thumb is to ask if two string with the same characters are unique. For example, say you have data on a whole bunch of people, including their names. You see two first names are the same. Would all people with the name "Sarah" be the same person? No, each "Sarah" is unique, so this should remain a character type.
+
+Now suppose you have data a bunch of sports teams. Each team has an associated state. Here, the state names are not unique. If you see a baseball team with state "MI" and a football team with state "MI", the state names are not referencing to unique places. So in this case, it would make sense to convert it to a factor type.
+
+To sum it up, convert anything you think is talking about groups of things into factors and leave things referring to unique or actual numbers alone.
+
+## Functions
+
+Functions are bits of code that will run when you call them. They often have parameters and can return values.
+Functions are how you will do most things in R. You call a function by using the name followed by parenthesis. Some parameters are optional and can be specified using the name.
+
+```{r}
+# pass the value or object you want to print as the parameter
+print("Hello World")
+
+# log functions excepts two parameters, using the name for the second parameter
+# it returns a value that we can store
+hundred_log_10 <- log(100, base=10)
+
+# we don't have to use the name for the parameter, as long as we place the values in the correct places
+# by not storing the value, R will automatically print it
+log(100, 10)
+```
+
+**Tip** It is a good idea to use the parameter names when specifying optional arguments, that way you won't have to worry about which argument goes where.
+
+**Tip** To learn more about a function, use `?` before the function name, then run it. This will pull up the documentation instead of executing it. Alternative, you can press `F1` when your cursor is within the function name.
+
+```{r}
+# you can leave out the parenthesis
+?log()
+?log
+```
+
+## R Packages
+
+
+
+# Data and Data Frames
+
+## Reading in Data
+
+Most data you will use in this class will come from csv files. You will read this data into a data frame using the `read.csv()` function.
+
+```{r}
+df <- read.csv('nycflightsjan13.csv')
+```
+
+
