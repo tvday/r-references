@@ -11,7 +11,7 @@
 
 <meta name="author" content="Thomas Day" />
 
-<meta name="date" content="2023-01-26" />
+<meta name="date" content="2023-02-04" />
 
 <title>Reference Documentation</title>
 
@@ -1487,7 +1487,7 @@ border-radius: 0px;
 
 <h1 class="title toc-ignore">Reference Documentation</h1>
 <h4 class="author">Thomas Day</h4>
-<h4 class="date">2023-01-26</h4>
+<h4 class="date">2023-02-04</h4>
 
 </div>
 
@@ -1652,12 +1652,68 @@ about which argument goes where.</p>
 <code>?</code> before the function name, then run it. This will pull up
 the documentation instead of executing it. Alternative, you can press
 <code>F1</code> when your cursor is within the function name.</p>
-<pre class="r"><code># you can leave out the parenthesis
+<pre class="r"><code># you can leave out the parenthesis and parameters
+?log(10)
 ?log()
 ?log</code></pre>
 </div>
 <div id="r-packages" class="section level2">
 <h2>R Packages</h2>
+<p>There are a lot of built in functions in R at our disposal, but
+sometimes we need more functionality. This is where packages come in.
+Packages are basically groups of code, functions, and data that can
+imported and used. Packages are often written by third parties and need
+to be downloaded and installed before they can be loaded and used. The
+most common place to get packages are from CRAN, which is supported by
+the R Foundation. To install a package, use
+<code>install.packages()</code> and pass a string of the packages name.
+Example:</p>
+<pre class="r"><code># Install the neuralnet package to get access to many useful neural network functions
+install.packages(&#39;neuralnet&#39;)</code></pre>
+<p>You only need to install a package once, unless updating, so leave it
+out of R scripts and Rmd files. Instead, run the
+<code>install.packages</code> command in the console. To automate
+package installing if giving your Rmd file to another person, you can
+use the following:</p>
+<pre class="r"><code>if (!require(tidyverse)) {
+    install.packages(&#39;tidyverse&#39;)
+    library(tidyverse)
+}</code></pre>
+<pre><code>## Loading required package: tidyverse</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
+## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
+## ✔ readr   2.1.3      ✔ forcats 0.5.2 
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<p>The <code>require</code> function checks to see the the user has the
+required library installed. If so, it loads the package and returns
+true. If the the return is false–meaning the package is not installed–we
+enter the if block. There, we can install the package and then load it
+as normal.</p>
+<p>To update a package, just run <code>install.packages</code>
+again.</p>
+<p><strong>Tip</strong> Notice the where strings are used and where they
+aren’t. <code>install.packages</code> uses a string to search CRAN for a
+matching repository (file). <code>library</code> does need to use a
+string, as the ‘name’ or ‘symbol’ is available after installation.</p>
+<p>Sometimes different packages have functions with same name. We can
+specify to R which we are referring to by using a special namespace
+syntax:
+<code>&lt;package name&gt;::&lt;function or data set name&gt;</code>.
+Example:</p>
+<pre class="r"><code>library(nycflights13)
+# accessing the flights data set from nycflights13 package and storing a copy to flights_df
+flights_df &lt;- nycflights13::flights
+
+# access the median function from the R stats package
+stats::median(flights_df$air_time, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 129</code></pre>
+<p><strong>Tip</strong> When you load a package, you don’t need to use
+this syntax unless two functions share the same name and one overwrites
+the other. You do need to use this syntax for data sets.</p>
 </div>
 </div>
 <div id="data-and-data-frames" class="section level1">
@@ -1665,9 +1721,504 @@ the documentation instead of executing it. Alternative, you can press
 <div id="reading-in-data" class="section level2">
 <h2>Reading in Data</h2>
 <p>Most data you will use in this class will come from csv files. You
-will read this data into a data frame using the <code>read.csv()</code>
-function.</p>
-<pre class="r"><code>df &lt;- read.csv(&#39;nycflightsjan13.csv&#39;)</code></pre>
+will read this data into a data frame using the <code>read.csv</code>
+function. Alternatively, you can get data from packages, as shown
+above.</p>
+<pre class="r"><code># reading from a csv
+flights &lt;- read.csv(&#39;nycflightsjan13.csv&#39;)
+
+# copying from a package
+flights_from_package &lt;- nycflights13::flights</code></pre>
+<p>In either case, we store the result in a variable. The result is a
+data frame, which is like a table.</p>
+<p><strong>Tip</strong> Give all your variables descriptive names.</p>
+</div>
+<div id="data-frames" class="section level2">
+<h2>Data Frames</h2>
+<p>Data frames are R’s representation a tabular data. It consists of
+multiple columns of vectors, each of which can be of a different type.
+Each row in a data frame is one entry.</p>
+<p>We can explore a data frame using <code>str</code> and
+<code>summary</code>:</p>
+<p><code>str</code> provides the structure of the data frame. It gives
+the size of the table (number of rows and number of columns), name of
+each column, the type of each column, and the first several entries in
+each column.</p>
+<pre class="r"><code>str(flights)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    27004 obs. of  17 variables:
+##  $ X        : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ year     : int  2013 2013 2013 2013 2013 2013 2013 2013 2013 2013 ...
+##  $ month    : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ day      : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ dep_time : int  517 533 542 544 554 554 555 557 557 558 ...
+##  $ dep_delay: int  2 4 2 -1 -6 -4 -5 -3 -3 -2 ...
+##  $ arr_time : int  830 850 923 1004 812 740 913 709 838 753 ...
+##  $ arr_delay: int  11 20 33 -18 -25 12 19 -14 -8 8 ...
+##  $ carrier  : chr  &quot;UA&quot; &quot;UA&quot; &quot;AA&quot; &quot;B6&quot; ...
+##  $ tailnum  : chr  &quot;N14228&quot; &quot;N24211&quot; &quot;N619AA&quot; &quot;N804JB&quot; ...
+##  $ flight   : int  1545 1714 1141 725 461 1696 507 5708 79 301 ...
+##  $ origin   : chr  &quot;EWR&quot; &quot;LGA&quot; &quot;JFK&quot; &quot;JFK&quot; ...
+##  $ dest     : chr  &quot;IAH&quot; &quot;IAH&quot; &quot;MIA&quot; &quot;BQN&quot; ...
+##  $ air_time : int  227 227 160 183 116 150 158 53 140 138 ...
+##  $ distance : int  1400 1416 1089 1576 762 719 1065 229 944 733 ...
+##  $ hour     : int  5 5 5 5 5 5 5 5 5 5 ...
+##  $ minute   : int  17 33 42 44 54 54 55 57 57 58 ...</code></pre>
+<p>In this example, we see that the table consists of 27004 rows and 17
+columns. Looking at the columns, we can see <code>air_time</code> is an
+int type and <code>carrier</code> is a chr type.</p>
+<p>We can also use <code>nrow</code> and <code>ncol</code> to get the
+number of rows and columns, respectively.</p>
+<pre class="r"><code>nrow(flights)</code></pre>
+<pre><code>## [1] 27004</code></pre>
+<pre class="r"><code>ncol(flights)</code></pre>
+<pre><code>## [1] 17</code></pre>
+<p><code>summary</code> Calculates some basic statistics of each
+column.</p>
+<pre class="r"><code>summary(flights)</code></pre>
+<pre><code>##        X              year          month        day           dep_time   
+##  Min.   :    1   Min.   :2013   Min.   :1   Min.   : 1.00   Min.   :   1  
+##  1st Qu.: 6752   1st Qu.:2013   1st Qu.:1   1st Qu.: 8.00   1st Qu.: 907  
+##  Median :13502   Median :2013   Median :1   Median :16.00   Median :1409  
+##  Mean   :13502   Mean   :2013   Mean   :1   Mean   :15.99   Mean   :1347  
+##  3rd Qu.:20253   3rd Qu.:2013   3rd Qu.:1   3rd Qu.:24.00   3rd Qu.:1738  
+##  Max.   :27004   Max.   :2013   Max.   :1   Max.   :31.00   Max.   :2359  
+##                                                             NA&#39;s   :521   
+##    dep_delay          arr_time      arr_delay         carrier         
+##  Min.   : -30.00   Min.   :   1   Min.   : -70.00   Length:27004      
+##  1st Qu.:  -5.00   1st Qu.:1118   1st Qu.: -15.00   Class :character  
+##  Median :  -2.00   Median :1556   Median :  -3.00   Mode  :character  
+##  Mean   :  10.04   Mean   :1523   Mean   :   6.13                     
+##  3rd Qu.:   8.00   3rd Qu.:1946   3rd Qu.:  13.00                     
+##  Max.   :1301.00   Max.   :2400   Max.   :1272.00                     
+##  NA&#39;s   :521       NA&#39;s   :536    NA&#39;s   :606                         
+##    tailnum              flight        origin              dest          
+##  Length:27004       Min.   :   1   Length:27004       Length:27004      
+##  Class :character   1st Qu.: 542   Class :character   Class :character  
+##  Mode  :character   Median :1459   Mode  :character   Mode  :character  
+##                     Mean   :1959                                        
+##                     3rd Qu.:3750                                        
+##                     Max.   :8500                                        
+##                                                                         
+##     air_time        distance         hour           minute     
+##  Min.   : 20.0   Min.   :  80   Min.   : 0.00   Min.   : 0.00  
+##  1st Qu.: 84.0   1st Qu.: 483   1st Qu.: 9.00   1st Qu.:16.00  
+##  Median :137.0   Median : 872   Median :14.00   Median :31.00  
+##  Mean   :154.2   Mean   :1007   Mean   :13.15   Mean   :31.72  
+##  3rd Qu.:194.0   3rd Qu.:1372   3rd Qu.:17.00   3rd Qu.:50.00  
+##  Max.   :667.0   Max.   :4983   Max.   :23.00   Max.   :59.00  
+##  NA&#39;s   :606                    NA&#39;s   :521     NA&#39;s   :521</code></pre>
+<p>For numeric data, we will get the min, max, median, mean, 1st and 3rd
+quartiles, and number of missing data if applicable. For the character
+data, we don’t get useful data.</p>
+<div id="accessing-columns-and-rows" class="section level3">
+<h3>Accessing Columns and Rows</h3>
+<p>There are several ways to access a particular column of a data frame.
+The first is using square bracket notation <code>[ ]</code> with the
+column name as a string: <code>df[&quot;&lt;column name&gt;&quot;]</code>. You can
+also use square bracket notation with a column index instead:
+<code>df[&lt;index as an int&gt;]</code>. This will grab the column at
+that place. The final way to access columns, and the most used is using
+the <code>$</code> operator followed by the column name:
+<code>df$&lt;column name&gt;</code>. Note, this method doesn’t use
+strings. This way is particularly useful, as it allows RStudio to
+autocomplete.</p>
+<pre class="r"><code># using column name as a string and square brackets
+flights[&#39;carrier&#39;]</code></pre>
+<pre><code>##    carrier
+## 1       UA
+## 2       UA
+## 3       AA
+## 4       B6
+## 5       DL
+## 6       UA
+## 7       B6
+## 8       EV
+## 9       B6
+## 10      AA
+##  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 26994 rows ]</code></pre>
+<pre class="r"><code># using index and square brackets
+flights[10]</code></pre>
+<pre><code>##    tailnum
+## 1   N14228
+## 2   N24211
+## 3   N619AA
+## 4   N804JB
+## 5   N668DN
+## 6   N39463
+## 7   N516JB
+## 8   N829AS
+## 9   N593JB
+## 10  N3ALAA
+##  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 26994 rows ]</code></pre>
+<pre class="r"><code># using $ and column name
+flights$carrier</code></pre>
+<pre><code>##  [1] &quot;UA&quot; &quot;UA&quot; &quot;AA&quot; &quot;B6&quot; &quot;DL&quot; &quot;UA&quot; &quot;B6&quot; &quot;EV&quot; &quot;B6&quot; &quot;AA&quot;
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 26994 entries ]</code></pre>
+<p>Note that <code>[ ]</code> notation returns the column as a n x 1
+table. <code>$</code> notation will return the column as a vector.</p>
+<p>You can access rows using a slight variation on square bracket
+notation.</p>
+</div>
+</div>
+<div id="cleaning" class="section level2">
+<h2>Cleaning</h2>
+<div id="deleting-columns" class="section level3">
+<h3>Deleting Columns</h3>
+<p>Sometimes, a data set will have columns that have no use to us. One
+example is an row identifying column, like an index. Identifiers are
+useful when linking tables together, but once we have all our data, we
+can just use R row indexing. So we should remove those columns. The
+<code>X</code> column is one example; let’s remove it.</p>
+<p>Other columns that should be deleted are columns that provide no
+interesting information. In the above example, all the flights are from
+the year 2013, so we don’t need to keep the year column. Also, this data
+is limited to the month January, so let’s also remove the month
+column.</p>
+<p>Sometimes you might get duplicate data or create new columns based of
+old ones that better represent the information you need. There could be
+many reasons to remove a column.</p>
+<p>You delete a column by assigning NULL to it:
+<code>df$col &lt;- NULL</code>. Let’s get rid of those uneeded
+columns.</p>
+<pre class="r"><code>flights$X &lt;- NULL
+flights$year &lt;- NULL
+flights$month &lt;- NULL</code></pre>
+</div>
+<div id="changing-types" class="section level3">
+<h3>Changing Types</h3>
+<p>R infers types when reading in data through a pretty simple process.
+This means anything that looks like a integer will be saved as an
+integer type, if it has decimals save it as numeric, and if its not
+either of those then save it as a character type.</p>
+<p>We talked above about factors vs numerica and character types. To
+reemphasize the rule of thumb for numeric types:</p>
+<blockquote>
+<p>Does adding make sense?</p>
+</blockquote>
+<p>And the rule for character types:</p>
+<blockquote>
+<p>Is each one unique or represent a group/category?</p>
+</blockquote>
+<p>Let’s first look at some of the character type columns.
+<code>tailnum</code> is an identifier for aircraft. If we see two
+flights with the same tail number, that means they were the same plane.
+Equal tail numbers are not representing unique things, so that should be
+grouped. So, this column should be transformed to a factor. Similarly,
+<code>carrier</code>, <code>origin</code>, and <code>dest</code> are
+representing groups a possibilities; they should all be factors.</p>
+<p>What about some of the numeric types? Let’s start with
+<code>flight</code>. Flight numbers are codes used by airlines to
+identify routes and flights. Would it make sense to add two flight
+numbers together? No, so therefore they should not stay as number.
+However, should they be characters or factors? Two flights with the same
+flight number should be on the same route. Therefore, it would make
+sense to group flight numbers. However, two different airlines could
+share flight numbers. In this case, two equal flight numbers would
+represent two unique pieces of information. Ideally, we would want to
+group airline and flight number, but we will ignore that for now. Let’s
+make <code>flight</code> a factor, since that we be most useful.</p>
+<p>What about for day of the month? Does it make sense to add two dates
+together? Typically, no. So <code>day</code> would work better as a
+factor. <code>hour</code> and <code>minute</code> have similar
+arguments, but some numeric operations could be useful. For example, we
+may want the average</p>
+<blockquote>
+<p>TODO</p>
+</blockquote>
+<p>To change a column to a factor type, use the <code>as.factor</code>
+command on the column and reassign the output to the same column. Let’s
+edit our data:</p>
+<pre class="r"><code># using flights$tailnum as the parameter
+# assigning the output to flights$tailnum
+flights$tailnum &lt;- as.factor(flights$tailnum)
+flights$carrier &lt;- as.factor(flights$carrier)
+flights$origin &lt;- as.factor(flights$origin)
+flights$dest &lt;- as.factor(flights$dest)
+
+flights$flight &lt;- as.factor(flights$flight)
+flights$day &lt;- as.factor(flights$day)
+flights$hour &lt;- as.factor(flights$hour)
+flights$minute &lt;- as.factor(flights$minute)</code></pre>
+<p>Let’s look at the structure and summary of our data again after our
+cleaning.</p>
+<pre class="r"><code>str(flights)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    27004 obs. of  14 variables:
+##  $ day      : Factor w/ 31 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ dep_time : int  517 533 542 544 554 554 555 557 557 558 ...
+##  $ dep_delay: int  2 4 2 -1 -6 -4 -5 -3 -3 -2 ...
+##  $ arr_time : int  830 850 923 1004 812 740 913 709 838 753 ...
+##  $ arr_delay: int  11 20 33 -18 -25 12 19 -14 -8 8 ...
+##  $ carrier  : Factor w/ 16 levels &quot;9E&quot;,&quot;AA&quot;,&quot;AS&quot;,..: 12 12 2 4 5 12 4 6 4 2 ...
+##  $ tailnum  : Factor w/ 3149 levels &quot;&quot;,&quot;N0EGMQ&quot;,&quot;N10156&quot;,..: 170 448 1968 2544 2147 933 1524 2605 1816 960 ...
+##  $ flight   : Factor w/ 1652 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 827 931 633 436 270 918 297 1640 57 155 ...
+##  $ origin   : Factor w/ 3 levels &quot;EWR&quot;,&quot;JFK&quot;,&quot;LGA&quot;: 1 3 2 2 3 1 1 3 2 3 ...
+##  $ dest     : Factor w/ 94 levels &quot;ALB&quot;,&quot;ATL&quot;,&quot;AUS&quot;,..: 39 39 51 9 2 61 31 38 47 61 ...
+##  $ air_time : int  227 227 160 183 116 150 158 53 140 138 ...
+##  $ distance : int  1400 1416 1089 1576 762 719 1065 229 944 733 ...
+##  $ hour     : Factor w/ 23 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;4&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
+##  $ minute   : Factor w/ 60 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 18 34 43 45 55 55 56 58 58 59 ...</code></pre>
+<pre class="r"><code>summary(flights)</code></pre>
+<pre><code>##       day           dep_time      dep_delay          arr_time   
+##  2      :  943   Min.   :   1   Min.   : -30.00   Min.   :   1  
+##  7      :  933   1st Qu.: 907   1st Qu.:  -5.00   1st Qu.:1118  
+##  10     :  932   Median :1409   Median :  -2.00   Median :1556  
+##  11     :  930   Mean   :1347   Mean   :  10.04   Mean   :1523  
+##  14     :  928   3rd Qu.:1738   3rd Qu.:   8.00   3rd Qu.:1946  
+##  31     :  928   Max.   :2359   Max.   :1301.00   Max.   :2400  
+##  (Other):21410   NA&#39;s   :521    NA&#39;s   :521       NA&#39;s   :536   
+##    arr_delay          carrier        tailnum          flight      origin    
+##  Min.   : -70.00   UA     :4637          :  155   11     :   93   EWR:9893  
+##  1st Qu.: -15.00   B6     :4427   N730MQ :   74   181    :   89   JFK:9161  
+##  Median :  -3.00   EV     :4171   N739MQ :   73   695    :   82   LGA:7950  
+##  Mean   :   6.13   DL     :3690   N713MQ :   70   145    :   79             
+##  3rd Qu.:  13.00   AA     :2794   N719MQ :   66   717    :   76             
+##  Max.   :1272.00   MQ     :2271   N734MQ :   66   161    :   74             
+##  NA&#39;s   :606       (Other):5014   (Other):26500   (Other):26511             
+##       dest          air_time        distance         hour           minute     
+##  ATL    : 1396   Min.   : 20.0   Min.   :  80   8      : 2314   55     :  839  
+##  ORD    : 1269   1st Qu.: 84.0   1st Qu.: 483   15     : 1968   56     :  775  
+##  BOS    : 1245   Median :137.0   Median : 872   16     : 1900   54     :  765  
+##  MCO    : 1175   Mean   :154.2   Mean   :1007   17     : 1863   58     :  735  
+##  FLL    : 1161   3rd Qu.:194.0   3rd Qu.:1372   18     : 1831   57     :  706  
+##  LAX    : 1159   Max.   :667.0   Max.   :4983   (Other):16607   (Other):22663  
+##  (Other):19599   NA&#39;s   :606                    NA&#39;s   :  521   NA&#39;s   :  521</code></pre>
+<p>We now can see that some of columns give better information than
+before. We can see how many carriers their are and how many flights each
+airport receives.</p>
+</div>
+<div id="nas-nan-and-null" class="section level3">
+<h3>NA’s, NaN, and NULL</h3>
+<p><code>NA</code> and <code>NULL</code> are two special data types in
+R. NA stands for “not available”. We will see this value when ever a row
+is missing a value in a column. From above, we see that there are 606
+missing values in <code>air_time</code>.</p>
+<p>Null represents nothing. Null is the value of no value or
+non-existence. Be careful though, because while it has a similar concept
+as zero, zero is a value. Zero represent a count of nothing–or false in
+Boolean values–while null is no value. In other words, zero is
+measurable while null is not.</p>
+<p>Null and NA have similar ideas: there is no value. However, there
+purposes and meaning are different. NA represents an idea of a missing
+value where there should be one. Null is used where there is no value
+(i.e., no value exists) and NA is used where there should be a value
+(i.e., a value exists but it is unknown). <code>NULL</code> is also a
+special keyword representing the NULL object. We used this when deleting
+columns. We are saying the R, give this column no value; in other words,
+delete it.</p>
+<p><code>NaN</code> is yet another special value, but only for numeric
+types. It stands for “Not a Number”. It comes up most often when a
+mathematical formula/algorithm is undefined with certain input. <span class="math inline">\(0/0\)</span> is an undefined equation, so will
+return <code>NaN</code>. Other times, NaN is not useful to
+statisticians, and the concept of infinity would be better. R also has a
+special value for this <code>Inf</code>. <span class="math inline">\(11/0\)</span> will return <code>Inf</code>.
+<code>NaN</code> and <code>Inf</code> are numerical types and play with
+functions in different ways, so be wary of them.</p>
+<pre class="r"><code>0/0</code></pre>
+<pre><code>## [1] NaN</code></pre>
+<pre class="r"><code>11/0</code></pre>
+<pre><code>## [1] Inf</code></pre>
+<pre class="r"><code># double is a numeric type
+typeof(Inf)</code></pre>
+<pre><code>## [1] &quot;double&quot;</code></pre>
+<pre class="r"><code>typeof(NaN)</code></pre>
+<pre><code>## [1] &quot;double&quot;</code></pre>
+<pre class="r"><code>max(NaN, Inf)</code></pre>
+<pre><code>## [1] NaN</code></pre>
+<pre class="r"><code>min(NaN, Inf)</code></pre>
+<pre><code>## [1] NaN</code></pre>
+<pre class="r"><code>max(-3, 6, Inf)</code></pre>
+<pre><code>## [1] Inf</code></pre>
+<pre class="r"><code>min(-3, 6, Inf)</code></pre>
+<pre><code>## [1] -3</code></pre>
+<pre class="r"><code>max(-3, 6, NaN)</code></pre>
+<pre><code>## [1] NaN</code></pre>
+<pre class="r"><code>min(-3, 6, NaN)</code></pre>
+<pre><code>## [1] NaN</code></pre>
+<p><code>NA</code> has a similar affect to <code>NaN</code> when doing
+arithmetic. All return values will be <code>NA</code>, since R has no
+way of knowing how to add (or subtract or multiply or …) a number and a
+non-number. So we will need a way of dealing with NA values.</p>
+<pre class="r"><code>max(flights$arr_delay)</code></pre>
+<pre><code>## [1] NA</code></pre>
+<p>One way is to tell R to ignore NA rows for that specific function.
+Some functions have a parameter similar to <code>na.rm</code> which
+takes a Bolean value and defaults to <code>FALSE</code>. If we pass in
+<code>TRUE</code>, R will omit all NA values in its calculations.</p>
+<pre class="r"><code>max(flights$arr_delay, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 1272</code></pre>
+<p>Similar to this approach is deleting all rows that have NA
+values.</p>
+<pre class="r"><code>no_nas &lt;- na.omit(flights)
+summary(no_nas)</code></pre>
+<pre><code>##       day           dep_time      dep_delay           arr_time   
+##  7      :  930   Min.   :   1   Min.   : -30.000   Min.   :   1  
+##  10     :  929   1st Qu.: 906   1st Qu.:  -5.000   1st Qu.:1118  
+##  2      :  928   Median :1408   Median :  -2.000   Median :1555  
+##  14     :  923   Mean   :1347   Mean   :   9.986   Mean   :1523  
+##  11     :  917   3rd Qu.:1738   3rd Qu.:   8.000   3rd Qu.:1946  
+##  17     :  915   Max.   :2359   Max.   :1301.000   Max.   :2400  
+##  (Other):20856                                                   
+##    arr_delay          carrier        tailnum          flight      origin    
+##  Min.   : -70.00   UA     :4590   N730MQ :   72   11     :   93   EWR:9616  
+##  1st Qu.: -15.00   B6     :4413   N739MQ :   70   181    :   88   JFK:9031  
+##  Median :  -3.00   EV     :3964   N713MQ :   67   695    :   82   LGA:7751  
+##  Mean   :   6.13   DL     :3655   N725MQ :   65   145    :   77             
+##  3rd Qu.:  13.00   AA     :2724   N723MQ :   64   161    :   74             
+##  Max.   :1272.00   MQ     :2203   N734MQ :   64   717    :   74             
+##                    (Other):4849   (Other):25996   (Other):25910             
+##       dest          air_time        distance         hour           minute     
+##  ATL    : 1368   Min.   : 20.0   Min.   :  80   8      : 2311   55     :  835  
+##  ORD    : 1227   1st Qu.: 84.0   1st Qu.: 488   15     : 1962   56     :  775  
+##  BOS    : 1214   Median :137.0   Median : 872   16     : 1894   54     :  765  
+##  MCO    : 1173   Mean   :154.2   Mean   :1014   17     : 1856   58     :  732  
+##  FLL    : 1155   3rd Qu.:194.0   3rd Qu.:1372   18     : 1826   57     :  705  
+##  LAX    : 1154   Max.   :667.0   Max.   :4983   6      : 1818   53     :  704  
+##  (Other):19107                                  (Other):14731   (Other):21882</code></pre>
+<pre class="r"><code>nrow(no_nas)</code></pre>
+<pre><code>## [1] 26398</code></pre>
+<p>Notice how many rows we lost: 606. That’s a lot of information gone
+that would’ve been useful. To keep that information, we can modify our
+data to fill in those missing values. Sometimes we can go through and
+manually infer or see what those values should be. Other times, it can
+suffice to replace NAs with the median or mean of your data. Which one
+you use depends on what you want to do with your data and the
+distribution of your data.</p>
+<pre class="r"><code># calculate the mean (or median) of the column, omitting the NAs
+dep_time_mean &lt;- mean(flights$dep_time, na.rm = TRUE)
+# use an ifelse statement to reassign the column with the appropriate values
+flights$dep_time &lt;- ifelse(is.na(flights$dep_time), # if that value is missing
+                           dep_time_mean,           # replace it with the mean
+                           flights$dep_time)        # else, keep the data unchanged
+
+# we can also do that in one step
+flights$dep_delay &lt;- ifelse(is.na(flights$dep_delay),               # if that value is missing
+                           mean(flights$dep_delay, na.rm = TRUE),   # replace it with the mean
+                           flights$dep_delay)                       # else, keep the data unchanged
+
+flights$arr_time &lt;- ifelse(is.na(flights$arr_time),
+                           mean(flights$arr_time, na.rm = TRUE),
+                           flights$arr_time)
+
+flights$arr_delay &lt;- ifelse(is.na(flights$arr_delay),
+                           mean(flights$arr_delay, na.rm = TRUE),
+                           flights$arr_delay)
+
+flights$air_time &lt;- ifelse(is.na(flights$air_time),
+                           mean(flights$air_time, na.rm = TRUE),
+                           flights$air_time)</code></pre>
+<p>Let’s take one last look at our data after cleaning.</p>
+<pre class="r"><code>str(flights)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    27004 obs. of  14 variables:
+##  $ day      : Factor w/ 31 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ dep_time : num  517 533 542 544 554 554 555 557 557 558 ...
+##  $ dep_delay: num  2 4 2 -1 -6 -4 -5 -3 -3 -2 ...
+##  $ arr_time : num  830 850 923 1004 812 ...
+##  $ arr_delay: num  11 20 33 -18 -25 12 19 -14 -8 8 ...
+##  $ carrier  : Factor w/ 16 levels &quot;9E&quot;,&quot;AA&quot;,&quot;AS&quot;,..: 12 12 2 4 5 12 4 6 4 2 ...
+##  $ tailnum  : Factor w/ 3149 levels &quot;&quot;,&quot;N0EGMQ&quot;,&quot;N10156&quot;,..: 170 448 1968 2544 2147 933 1524 2605 1816 960 ...
+##  $ flight   : Factor w/ 1652 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 827 931 633 436 270 918 297 1640 57 155 ...
+##  $ origin   : Factor w/ 3 levels &quot;EWR&quot;,&quot;JFK&quot;,&quot;LGA&quot;: 1 3 2 2 3 1 1 3 2 3 ...
+##  $ dest     : Factor w/ 94 levels &quot;ALB&quot;,&quot;ATL&quot;,&quot;AUS&quot;,..: 39 39 51 9 2 61 31 38 47 61 ...
+##  $ air_time : num  227 227 160 183 116 150 158 53 140 138 ...
+##  $ distance : int  1400 1416 1089 1576 762 719 1065 229 944 733 ...
+##  $ hour     : Factor w/ 23 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;4&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
+##  $ minute   : Factor w/ 60 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 18 34 43 45 55 55 56 58 58 59 ...</code></pre>
+<pre class="r"><code>summary(flights)</code></pre>
+<pre><code>##       day           dep_time      dep_delay          arr_time   
+##  2      :  943   Min.   :   1   Min.   : -30.00   Min.   :   1  
+##  7      :  933   1st Qu.: 913   1st Qu.:  -5.00   1st Qu.:1122  
+##  10     :  932   Median :1354   Median :  -2.00   Median :1542  
+##  11     :  930   Mean   :1347   Mean   :  10.04   Mean   :1523  
+##  14     :  928   3rd Qu.:1733   3rd Qu.:   9.00   3rd Qu.:1941  
+##  31     :  928   Max.   :2359   Max.   :1301.00   Max.   :2400  
+##  (Other):21410                                                  
+##    arr_delay          carrier        tailnum          flight      origin    
+##  Min.   : -70.00   UA     :4637          :  155   11     :   93   EWR:9893  
+##  1st Qu.: -15.00   B6     :4427   N730MQ :   74   181    :   89   JFK:9161  
+##  Median :  -3.00   EV     :4171   N739MQ :   73   695    :   82   LGA:7950  
+##  Mean   :   6.13   DL     :3690   N713MQ :   70   145    :   79             
+##  3rd Qu.:  12.00   AA     :2794   N719MQ :   66   717    :   76             
+##  Max.   :1272.00   MQ     :2271   N734MQ :   66   161    :   74             
+##                    (Other):5014   (Other):26500   (Other):26511             
+##       dest          air_time        distance         hour           minute     
+##  ATL    : 1396   Min.   : 20.0   Min.   :  80   8      : 2314   55     :  839  
+##  ORD    : 1269   1st Qu.: 85.0   1st Qu.: 483   15     : 1968   56     :  775  
+##  BOS    : 1245   Median :139.0   Median : 872   16     : 1900   54     :  765  
+##  MCO    : 1175   Mean   :154.2   Mean   :1007   17     : 1863   58     :  735  
+##  FLL    : 1161   3rd Qu.:191.2   3rd Qu.:1372   18     : 1831   57     :  706  
+##  LAX    : 1159   Max.   :667.0   Max.   :4983   (Other):16607   (Other):22663  
+##  (Other):19599                                  NA&#39;s   :  521   NA&#39;s   :  521</code></pre>
+<p>Only our categorical data is left with missing values. There is no
+simple way to deal with this, and needs a case by case decision. We will
+leave them for now and move on to deeper exploration.</p>
+</div>
+</div>
+<div id="deeper-exploration" class="section level2">
+<h2>Deeper Exploration</h2>
+<p><code>str</code> and <code>summary</code> give a basic overview of
+our data, but aren’t super useful beyond that. We need to do some deeper
+exploration to get a better sense of our data and start answering some
+interesting questions.</p>
+<p><code>mean</code>, <code>median</code>, <code>min</code>, and
+<code>max</code> are all use functions. They each do as their name
+suggests and can be applied to any numerical vector we want. As seen
+above, they won’t work with NA values present, so either use
+<code>na.rm</code> or clean your data first.</p>
+<pre class="r"><code>mean(flights$air_time)
+median(flights$air_time)
+min(flights$air_time)
+max(flights$air_time)</code></pre>
+<pre><code>## [1] 154.1874
+## [1] 139
+## [1] 20
+## [1] 667</code></pre>
+<p>This is a good first step, but we what if we want information for
+each airline? We can use a function called <code>tapply</code>, short
+for table apply, to break down statistics for each category that we
+want. Let’s compute the average arrival delay for each carrier. Let’s
+also look at the farthest each flight has been.</p>
+<pre class="r"><code>tapply(flights$arr_delay,   # the column that we&#39;re interested in
+       flights$carrier,     # the column which will specify the break down, 
+                            # in this case we want arr_delay info for each carrier
+       mean                 # the function that we want to use on our data
+       )</code></pre>
+<pre><code>##         9E         AA         AS         B6         DL         EV         F9 
+##   9.966362   1.111345   8.967742   4.721667  -4.304729  24.215753  21.830508 
+##         FL         HA         MQ         OO         UA         US         VX 
+##   3.352195  27.483871   7.831281 107.000000   3.205544   1.571934 -15.144747 
+##         WN         YV 
+##   5.888986  12.606735</code></pre>
+<pre class="r"><code>tapply(flights$distance, flights$flight, max)</code></pre>
+<pre><code>##    1    2    3    4    6    7    8    9   10   11   12   15   16   17   19   20 
+## 2475  711 2475  944 1990 2402  301  944 1416 2586  209 4963 2402 1069 2475 1411 
+##   21   22   23   24   25   27   29   30   31   32   33   35   36   39   40   41 
+## 2475  209 2586  266 2586 2586 2586  264 2586  719 2475 2153  264 1028 2227 2227 
+##   42   43   44   45   47   49   51   53   54   55   56   57   59   61   63   66 
+##  209  944  209 1372 1069 1028 4983 1400 2454 2378  266 1028 2586 1069 1605  301 
+##   69   71   72   73   74   75   76   77   79   80   83   85   87   91   95   97 
+## 1605 1005  719 2565  266 2133 1416 2227  944 1400 2422 2586 2475 2576  760 1626 
+##  101  102  104  112  115  117  119  120  122  123  125  127  128  130  133  135 
+##  711  301  301 2475 1182 2475 2454 2475  725  529 1069 2475  725 1167 2475 1620 
+##  137  139  141  143  145  147  153  155  157  161  162  163  164  165  168  171 
+## 1074 1074 1028 1028 2446 1074  944  944  944 2475  719 1005 1400 2454 1605 2521 
+##  173  177  179  181 
+## 2569 2586 2586 2475 
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 1552 entries ]</code></pre>
+<p>That last one has too much output to digest. Let’s look at the top
+10.</p>
+<pre class="r"><code># calculate info for each flight
+results &lt;- tapply(flights$distance, flights$flight, max)
+# sort the results in decreasing value
+results &lt;- sort(results, decreasing = TRUE)
+# print the first 10 results
+results[1:10]</code></pre>
+<pre><code>##   51   15   11   23   25   27   29   31   59   85 
+## 4983 4963 2586 2586 2586 2586 2586 2586 2586 2586</code></pre>
+<p>We can also do that in one step. Let’s look at which planes typically
+have the worst departure delays.</p>
+<pre class="r"><code>sort(tapply(flights$dep_delay, flights$tailnum, median), decreasing = TRUE)[1:10]</code></pre>
+<pre><code>## N911DA N951FR N305AS N326AT N652SW N365AA N621SW N162PQ N5CEAA N472AA 
+##    268    248    222    210    195    191    169    160    160    151</code></pre>
 </div>
 </div>
 

@@ -23,9 +23,9 @@ You can use R as a glorified calculator. All arithmatic calculations can be easi
 
 You would note that the outputs to the commands have this \verb|[1]| before them. The number indicates how many values there are in the output. Since the commands above lead to a single output value - you see the \verb|[1]| there.
 
-When you have complicated Arithmatic Expressions, R follows usual \rconcept{Arithmatic Operator Precedance}: Brackets, Exponent, Division and Multiplication, Addition and Subtraction - in that order. Go Left to Right for the same precedance. Of course it is preferable to put in enough paratheses so that you are not relying on R's operator precedance for accurate execution of your commands. 
+When you have complicated Arithmatic Expressions, R follows usual \rconcept{Arithmatic Operator Precedance}: Brackets, Exponent, Division and Multiplication, Addition and Subtraction - in that order. Go Left to Right for the same precedance. Of course it is preferable to put in enough paratheses so that you are not relying on R's operator precedance for accurate execution of your commands.
 <<>>=
-5 + 8 / 2 * 4 - 3 # First * then / then + then - 
+5 + 8 / 2 * 4 - 3 # First * then / then + then -
 # You should include enough parantheses
 (5 + 8) /((2 * 4) - 3)
 @
@@ -91,7 +91,7 @@ class(numvalue) #Finding data type of numvalue variable
 
 \subsection{Numeric Data}
 
-Variables of numeric data type can store both integers and floating point values. Unlike many programming languages, R does not have various different kinds of integers and floating point numbers defined to optimize memory usage. 
+Variables of numeric data type can store both integers and floating point values. Unlike many programming languages, R does not have various different kinds of integers and floating point numbers defined to optimize memory usage.
 
 \subsection{String Data}
 
@@ -102,7 +102,7 @@ day.name <- "Sunday" #Assigns the string Sunday to variable day.name
 someday <- "" #Empty string assigned to variable someday
 @
 
-String is a very useful data type as all other types of data can be saved as a string. For example - we can save numeric data ("23.37"), date data ("12/27/1976"), logical data ("TRUE") etc. all as string. R has several useful commands for working with string data. You can connect two strings together using the \rconcept{String Concatenation} function \rcommand{paste}. You can calculate the number of characters in a string using the \rcommand{nchar} function.\mnote{Many other strings related commands are discussed later} 
+String is a very useful data type as all other types of data can be saved as a string. For example - we can save numeric data ("23.37"), date data ("12/27/1976"), logical data ("TRUE") etc. all as string. R has several useful commands for working with string data. You can connect two strings together using the \rconcept{String Concatenation} function \rcommand{paste}. You can calculate the number of characters in a string using the \rcommand{nchar} function.\mnote{Many other strings related commands are discussed later}
 
 <<>>=
 nchar(day.name); nchar(someday)
@@ -142,7 +142,7 @@ The code above created a vector named \texttt{grades} that has 5 \texttt{element
 grades[2] #Gets the second element of the vector
 grades[4] <- 3 #Changes 4th element of the vector to 3
 length(grades) #Gets the length (number of elements) of the vector
-grades - 0.1 #Adds 2 to *each* element of the vector 
+grades - 0.1 #Adds 2 to *each* element of the vector
 grades #Displays current elements of the vector
 @
 
@@ -150,12 +150,12 @@ Vectors are also useful for doing element-by-element calculations. For example, 
 
 <<>>=
 work.per.day <- c(9, 11, 10, 8, 6, 3, 2) #Create new vector
-#work.and.sleep <- sleep.per.day + work.per.day 
+#work.and.sleep <- sleep.per.day + work.per.day
 #Added two vectors element by element
 #print(work.and.sleep) #Show added values
 @
 
-It is easy to access data elements inside a vector. All elements are assigned an index number - unlike many programming languages, R starts counting with 1 rather than 0. 
+It is easy to access data elements inside a vector. All elements are assigned an index number - unlike many programming languages, R starts counting with 1 rather than 0.
 
 <<>>=
 #wed.hours <- work.per.day[3] #Extracts third element
@@ -181,11 +181,11 @@ R includes perhaps thousands of functions for different tasks. Some functions ca
 
 <<>>=
 #Calling functions with name arguments
-round(x = 1.23456789, digits = 4) 
+round(x = 1.23456789, digits = 4)
 #Arguments passed in order, withour names
 round(1.23456789, 4)
 #Using default values for optional arguments
-round(1.23456789) 
+round(1.23456789)
 @
 
 The first line above shows running (or \texttt{calling}) the function $round$ \index{R Commands!round} with explicitly named arguments. $x$ represents the number to be rounded and $digits$ represents how many digits after the decimal point should the rounding be done for. We could have called the function without named arguments (like in the second line above) but then we would need to provide all the arguments in the exact order needed. As it is easy to mix-up the order, it is recommended that named arguments are used when multiple arguments are passed to a function.
@@ -203,8 +203,8 @@ library(ggplot2)
 detach(package:ggplot2)
 @
 
-You typically work in a directory during a R session. You can find current current working directory or set working directory to a directory of your choice. 
-When setting working directory to the desired location, in Windows use \verb|/| or \verb|\\| instead of \verb|\| character as the separator character. 
+You typically work in a directory during a R session. You can find current current working directory or set working directory to a directory of your choice.
+When setting working directory to the desired location, in Windows use \verb|/| or \verb|\\| instead of \verb|\| character as the separator character.
 <<>>=
 getwd()
 @

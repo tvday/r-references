@@ -18,7 +18,7 @@ First, lets make sure that we have R/RStudio set up to work in the right directo
 getwd()
 @
 
-If you wish to change the directory you want to work in (remember this is the directory where R/RStudio will save all outputs), then you can do so using the command \rcommand{setwd} and specifying the directory address. For example, the command below will make \verb|"c:\users\sankum"|\mnote{Notice that Windows uses the backslash while R uses the forward slash in directory path. This is essentially a hangover from R's Unix days.} the working directory. 
+If you wish to change the directory you want to work in (remember this is the directory where R/RStudio will save all outputs), then you can do so using the command \rcommand{setwd} and specifying the directory address. For example, the command below will make \verb|"c:\users\sankum"|\mnote{Notice that Windows uses the backslash while R uses the forward slash in directory path. This is essentially a hangover from R's Unix days.} the working directory.
 
 <<eval=FALSE>>=
 #setwd("c:/users/sankum") #Command disabled
@@ -30,13 +30,13 @@ Download the data file (available at: \href{https://umich.box.com/s/xtpp98qygojc
 nycdata <- read.csv("nycflightsjan13.csv")
 @
 
-There are a lot of things going on in the command above. Here are the key elements: \texttt{"<-"} is called the \textbf{Assignment Operator}\index{Key Concepts!Assignment Operator} - it takes the value on its left and assigns that value to the object on its right. On the right of the assignment operator, we have the R function \texttt{read.csv()} which reads a CSV or Comma Separated Values files. On the left we have a \textbf{Data Frame} that we are calling \texttt{nycdata}. 
+There are a lot of things going on in the command above. Here are the key elements: \texttt{"<-"} is called the \textbf{Assignment Operator}\index{Key Concepts!Assignment Operator} - it takes the value on its left and assigns that value to the object on its right. On the right of the assignment operator, we have the R function \texttt{read.csv()} which reads a CSV or Comma Separated Values files. On the left we have a \textbf{Data Frame} that we are calling \texttt{nycdata}.
 
 We have used several technical terms that we should define before going forward:\\
 \textbf{Operators} are part of R language and perform certain \textit{operations}. For example, as we saw, the assignment operators assigns the value from its left side to the object on its right side.\\
 \textbf{Objects} are basic building blocks of the R language that may contain both data and logic. R is an \textbf{Object Oriented Language} which means that it is organized around objects and their interactions.\\
 \textbf{Data Frame} is one of various types of objects in R that is used to store data. Data frames store data in neat rows and columns (like an Excel table) which makes them easy to use. Typically, columns contain different data fields and rows contain different observations of those data fields.\\
-\textbf{Functions} Function are pieces of code that perform a task and then return (or give back) a value. Functions (or their counterpart Subs - which also perform a task but do not return a value) can be identified by the \texttt{()} characters. When the function needs some information to perform the task, then that information is provided to the function by placing them inside \texttt{()} characters (as in the example above of \texttt{read.csv()} function.\\ 
+\textbf{Functions} Function are pieces of code that perform a task and then return (or give back) a value. Functions (or their counterpart Subs - which also perform a task but do not return a value) can be identified by the \texttt{()} characters. When the function needs some information to perform the task, then that information is provided to the function by placing them inside \texttt{()} characters (as in the example above of \texttt{read.csv()} function.\\
 \textbf{read.csv()} is one various types of functions that perform the task of importing data into an R object. This function reads a CSV file and outputs the contents of the file in the data frame format.
 
 So, we have used the \texttt{read.csv()} function to import data contained in the \texttt{nycflightsjan13.csv} file into the data frame named \texttt{nycdata}. Let's first peek inside this data frame using the \texttt{head()} \index{R Commands!head} function that shows first few lines of data.
@@ -45,7 +45,7 @@ So, we have used the \texttt{read.csv()} function to import data contained in th
 head(nycdata)
 @
 
-The data shows various information about all the flights departing from one of NYC airports in Jan 2013. Different data fields labels (first row of the data frame) are self explanatory. 
+The data shows various information about all the flights departing from one of NYC airports in Jan 2013. Different data fields labels (first row of the data frame) are self explanatory.
 
 If we want to know how many rows and columns there are in our data frame, then we can use the \texttt{nrow()} and \texttt{ncol()} \index{R Commands!nrow} \index{R Commands!ncol} function. Note that as shown below, you can run multiple R command on the same line by separating them using the end-of-command character \texttt{";"}.
 
@@ -83,14 +83,14 @@ We can easily plot our data in R. The code for Figure \ref{fig:hist} creates a h
 The plot shows that most of the flights that departed from NYC in Jan 2013 reached their destination without any significant delay. However, there might be differences between airlines - we would want to see average arrival delays calculated for each different airlines.
 
 <<>>=
-delaybycarrier <- tapply(nycdata$arr_delay, nycdata$carrier, 
+delaybycarrier <- tapply(nycdata$arr_delay, nycdata$carrier,
                          mean, na.rm = TRUE)
 delaybycarrier
 @
 
 Again we did some interesting things here. We calculated the average of \verb|arr_delay| column for each \texttt{carrier} using the \texttt{tapply()} \index{R Commands!tapply} function. We saved the output in an object named \texttt{delaybycarrier}. When we type just the object name by itself then R essentially prints out the contents of the object - which in this case consists of carrier names and corresponding average arrival delay. We can see that the carrier \texttt{VX} had the lowest arrival delay in Jan 2013 while the carrier \texttt{OO} had the highest.
 
-To illustrate the point further, we can make a barplot using the \texttt{barplot()} \index{R Commands!barplot} function (Figure \ref{fig:bar}) - not much different than the $hist()$ function before. 
+To illustrate the point further, we can make a barplot using the \texttt{barplot()} \index{R Commands!barplot} function (Figure \ref{fig:bar}) - not much different than the $hist()$ function before.
 
 \begin{figure}
 \centering
@@ -122,6 +122,6 @@ You can use the \texttt{head()} function we used earlier to check whether the ne
 nycdata$newspeed = nycdata$distance / nycdata$air_time
 @
 
-You can use either of the above two approach - all depends upon your preference. This brings us to our concluding thought of this demo. There are several (sometimes hundreds) of different ways to doing a task in R. Some are more suitable to the given context than others. However, it is up to you choose which to become expert on, which to know peripherally and which to ignore. Each person's interaction and experience with R is unique to that person and his/her choices. I hope this demo has given you an idea of the power, depth and versatility of R and has made you interested in the deep dives into different aspects of R that are about to come in following chapter.  
+You can use either of the above two approach - all depends upon your preference. This brings us to our concluding thought of this demo. There are several (sometimes hundreds) of different ways to doing a task in R. Some are more suitable to the given context than others. However, it is up to you choose which to become expert on, which to know peripherally and which to ignore. Each person's interaction and experience with R is unique to that person and his/her choices. I hope this demo has given you an idea of the power, depth and versatility of R and has made you interested in the deep dives into different aspects of R that are about to come in following chapter.
 
 \chapterendsymbol

@@ -147,23 +147,305 @@ log(100, 10)
 **Tip** To learn more about a function, use `?` before the function name, then run it. This will pull up the documentation instead of executing it. Alternative, you can press `F1` when your cursor is within the function name.
 
 ```{r}
-# you can leave out the parenthesis
+# you can leave out the parenthesis and parameters
+?log(10)
 ?log()
 ?log
 ```
 
 ## R Packages
 
+There are a lot of built in functions in R at our disposal, but sometimes we need more functionality. This is where packages come in. Packages are basically groups of code, functions, and data that can imported and used. Packages are often written by third parties and need to be downloaded and installed before they can be loaded and used. The most common place to get packages are from CRAN, which is supported by the R Foundation. To install a package, use `install.packages()` and pass a string of the packages name. Example:
+
+```{r eval=FALSE}
+# Install the neuralnet package to get access to many useful neural network functions
+install.packages('neuralnet')
+```
+
+You only need to install a package once, unless updating, so leave it out of R scripts and Rmd files. Instead, run the `install.packages` command in the console. To automate package installing if giving your Rmd file to another person, you can use the following:
+
+```{r}
+if (!require(tidyverse)) {
+    install.packages('tidyverse')
+    library(tidyverse)
+}
+```
+
+The `require` function checks to see the the user has the required library installed. If so, it loads the package and returns true. If the the return is false--meaning the package is not installed--we enter the if block. There, we can install the package and then load it as normal.
+
+To update a package, just run `install.packages` again.
+
+**Tip** Notice the where strings are used and where they aren't. `install.packages` uses a string to search CRAN for a matching repository (file). `library` does need to use a string, as the 'name' or 'symbol' is available after installation. 
+
+Sometimes different packages have functions with same name. We can specify to R which we are referring to by using a special namespace syntax: `<package name>::<function or data set name>`. Example:
+
+```{r}
+library(nycflights13)
+# accessing the flights data set from nycflights13 package and storing a copy to flights_df
+flights_df <- nycflights13::flights
+
+# access the median function from the R stats package
+stats::median(flights_df$air_time, na.rm = TRUE)
+```
+
+**Tip** When you load a package, you don't need to use this syntax unless two functions share the same name and one overwrites the other. You do need to use this syntax for data sets.
 
 
 # Data and Data Frames
 
 ## Reading in Data
 
-Most data you will use in this class will come from csv files. You will read this data into a data frame using the `read.csv()` function.
+Most data you will use in this class will come from csv files. You will read this data into a data frame using the `read.csv` function. Alternatively, you can get data from packages, as shown above.
 
 ```{r}
-df <- read.csv('nycflightsjan13.csv')
+# reading from a csv
+flights <- read.csv('nycflightsjan13.csv')
+
+# copying from a package
+flights_from_package <- nycflights13::flights
 ```
 
+In either case, we store the result in a variable. The result is a data frame, which is like a table.
+
+**Tip** Give all your variables descriptive names.
+
+## Data Frames
+
+Data frames are R's representation a tabular data. It consists of multiple columns of vectors, each of which can be of a different type. Each row in a data frame is one entry.
+
+We can explore a data frame using `str` and `summary`:
+
+`str` provides the structure of the data frame. It gives the size of the table (number of rows and number of columns), name of each column, the type of each column, and the first several entries in each column.
+
+```{r}
+str(flights)
+```
+
+In this example, we see that the table consists of `r nrow(flights)` rows and `r ncol(flights)` columns. Looking at the columns, we can see `air_time` is an int type and `carrier` is a chr type.
+
+We can also use `nrow` and `ncol` to get the number of rows and columns, respectively.
+
+```{r}
+nrow(flights)
+ncol(flights)
+```
+
+`summary` Calculates some basic statistics of each column.
+
+```{r}
+summary(flights)
+```
+
+For numeric data, we will get the min, max, median, mean, 1st and 3rd quartiles, and number of missing data if applicable. For the character data, we don't get useful data.
+
+### Accessing Columns and Rows
+
+There are several ways to access a particular column of a data frame. The first is using square bracket notation `[ ]` with the column name as a string: `df["<column name>"]`. You can also use square bracket notation with a column index instead: `df[<index as an int>]`. This will grab the column at that place. The final way to access columns, and the most used is using the `$` operator followed by the column name: `df$<column name>`. Note, this method doesn't use strings. This way is particularly useful, as it allows RStudio to autocomplete.
+
+```{r R.options=list(max.print=10)}
+# using column name as a string and square brackets
+flights['carrier']
+
+# using index and square brackets
+flights[10]
+
+# using $ and column name
+flights$carrier
+```
+
+Note that `[ ]` notation returns the column as a n x 1 table. `$` notation will return the column as a vector.
+
+You can access rows using a slight variation on square bracket notation.
+
+## Cleaning
+
+### Deleting Columns
+
+Sometimes, a data set will have columns that have no use to us. One example is an row identifying column, like an index. Identifiers are useful when linking tables together, but once we have all our data, we can just use R row indexing. So we should remove those columns. The `X` column is one example; let's remove it.
+
+Other columns that should be deleted are columns that provide no interesting information. In the above example, all the flights are from the year 2013, so we don't need to keep the year column. Also, this data is limited to the month January, so let's also remove the month column.
+
+Sometimes you might get duplicate data or create new columns based of old ones that better represent the information you need. There could be many reasons to remove a column.
+
+You delete a column by assigning NULL to it: `df$col <- NULL`. Let's get rid of those uneeded columns.
+
+```{r}
+flights$X <- NULL
+flights$year <- NULL
+flights$month <- NULL
+```
+
+
+### Changing Types
+
+R infers types when reading in data through a pretty simple process. This means anything that looks like a integer will be saved as an integer type, if it has decimals save it as numeric, and if its not either of those then save it as a character type.
+
+We talked above about factors vs numerica and character types. To reemphasize the rule of thumb for numeric types:
+
+> Does adding make sense?
+
+And the rule for character types:
+
+> Is each one unique or represent a group/category?
+
+Let's first look at some of the character type columns. `tailnum`  is an identifier for aircraft. If we see two flights with the same tail number, that means they were the same plane. Equal tail numbers are not representing unique things, so that should be grouped. So, this column should be transformed to a factor. Similarly, `carrier`, `origin`, and `dest` are representing groups a possibilities; they should all be factors.
+
+What about some of the numeric types? Let's start with `flight`. Flight numbers are codes used by airlines to identify routes and flights. Would it make sense to add two flight numbers together? No, so therefore they should not stay as number. However, should they be characters or factors? Two flights with the same flight number should be on the same route. Therefore, it would make sense to group flight numbers. However, two different airlines could share flight numbers. In this case, two equal flight numbers would represent two unique pieces of information. Ideally, we would want to group airline and flight number, but we will ignore that for now. Let's make `flight` a factor, since that we be most useful.
+
+What about for day of the month? Does it make sense to add two dates together? Typically, no. So `day` would work better as a factor. `hour` and `minute` have similar arguments, but some numeric operations could be useful. For example, we may want the average 
+
+ > TODO
+
+To change a column to a factor type, use the `as.factor` command on the column and reassign the output to the same column. Let's edit our data:
+
+```{r}
+# using flights$tailnum as the parameter
+# assigning the output to flights$tailnum
+flights$tailnum <- as.factor(flights$tailnum)
+flights$carrier <- as.factor(flights$carrier)
+flights$origin <- as.factor(flights$origin)
+flights$dest <- as.factor(flights$dest)
+
+flights$flight <- as.factor(flights$flight)
+flights$day <- as.factor(flights$day)
+flights$hour <- as.factor(flights$hour)
+flights$minute <- as.factor(flights$minute)
+```
+
+
+Let's look at the structure and summary of our data again after our cleaning.
+
+```{r}
+str(flights)
+summary(flights)
+```
+
+We now can see that some of columns give better information than before. We can see how many carriers their are and how many flights each airport receives.
+
+### NA's, NaN, and NULL
+
+`NA` and `NULL` are two special data types in R. NA stands for "not available". We will see this value when ever a row is missing a value in a column. From above, we see that there are `r sum(is.na(flights$air_time))` missing values in `air_time`. 
+
+Null represents nothing. Null is the value of no value or non-existence. Be careful though, because while it has a similar concept as zero, zero is a value. Zero represent a count of nothing--or false in Boolean values--while null is no value. In other words, zero is measurable while null is not.
+
+Null and NA have similar ideas: there is no value. However, there purposes and meaning are different. NA represents an idea of a missing value where there should be one. Null is used where there is no value (i.e., no value exists) and NA is used where there should be a value (i.e., a value exists but it is unknown). `NULL` is also a special keyword representing the NULL object. We used this when deleting columns. We are saying the R, give this column no value; in other words, delete it.
+
+`NaN` is yet another special value, but only for numeric types. It stands for "Not a Number". It comes up most often when a mathematical formula/algorithm is undefined with certain input. $0/0$ is an undefined equation, so will return `NaN`. Other times, NaN is not useful to statisticians, and the concept of infinity would be better. R also has a special value for this `Inf`. $11/0$ will return `Inf`. `NaN` and `Inf` are numerical types and play with functions in different ways, so be wary of them.
+
+```{r}
+0/0
+11/0
+
+# double is a numeric type
+typeof(Inf)
+typeof(NaN)
+
+max(NaN, Inf)
+min(NaN, Inf)
+
+max(-3, 6, Inf)
+min(-3, 6, Inf)
+max(-3, 6, NaN)
+min(-3, 6, NaN)
+```
+
+`NA` has a similar affect to `NaN` when doing arithmetic. All return values will be `NA`, since R has no way of knowing how to add (or subtract or multiply or ...) a number and a non-number. So we will need a way of dealing with NA values.
+
+```{r}
+max(flights$arr_delay)
+```
+
+One way is to tell R to ignore NA rows for that specific function. Some functions have a parameter similar to `na.rm` which takes a Bolean value and defaults to `FALSE`. If we pass in `TRUE`, R will omit all NA values in its calculations.
+
+```{r}
+max(flights$arr_delay, na.rm = TRUE)
+```
+
+Similar to this approach is deleting all rows that have NA values.
+
+```{r}
+no_nas <- na.omit(flights)
+summary(no_nas)
+nrow(no_nas)
+```
+
+Notice how many rows we lost: `r nrow(flights) - nrow(no_nas)`. That's a lot of information gone that would've been useful. To keep that information, we can modify our data to fill in those missing values. Sometimes we can go through and manually infer or see what those values should be. Other times, it can suffice to replace NAs with the median or mean of your data. Which one you use depends on what you want to do with your data and the distribution of your data.
+
+```{r}
+# calculate the mean (or median) of the column, omitting the NAs
+dep_time_mean <- mean(flights$dep_time, na.rm = TRUE)
+# use an ifelse statement to reassign the column with the appropriate values
+flights$dep_time <- ifelse(is.na(flights$dep_time), # if that value is missing
+                           dep_time_mean,           # replace it with the mean
+                           flights$dep_time)        # else, keep the data unchanged
+
+# we can also do that in one step
+flights$dep_delay <- ifelse(is.na(flights$dep_delay),               # if that value is missing
+                           mean(flights$dep_delay, na.rm = TRUE),   # replace it with the mean
+                           flights$dep_delay)                       # else, keep the data unchanged
+
+flights$arr_time <- ifelse(is.na(flights$arr_time),
+                           mean(flights$arr_time, na.rm = TRUE),
+                           flights$arr_time)
+
+flights$arr_delay <- ifelse(is.na(flights$arr_delay),
+                           mean(flights$arr_delay, na.rm = TRUE),
+                           flights$arr_delay)
+
+flights$air_time <- ifelse(is.na(flights$air_time),
+                           mean(flights$air_time, na.rm = TRUE),
+                           flights$air_time)
+```
+
+Let's take one last look at our data after cleaning.
+
+```{r}
+str(flights)
+summary(flights)
+```
+
+Only our categorical data is left with missing values. There is no simple way to deal with this, and needs a case by case decision. We will leave them for now and move on to deeper exploration.
+
+
+## Deeper Exploration
+
+`str` and `summary` give a basic overview of our data, but aren't super useful beyond that. We need to do some deeper exploration to get a better sense of our data and start answering some interesting questions.
+
+`mean`, `median`, `min`, and `max` are all use functions. They each do as their name suggests and can be applied to any numerical vector we want. As seen above, they won't work with NA values present, so either use `na.rm` or clean your data first.
+
+```{r results='hold'}
+mean(flights$air_time)
+median(flights$air_time)
+min(flights$air_time)
+max(flights$air_time)
+```
+
+This is a good first step, but we what if we want information for each airline? We can use a function called `tapply`, short for table apply, to break down statistics for each category that we want. Let's compute the average arrival delay for each carrier. Let's also look at the farthest each flight has been.
+
+```{r R.options=list(max.print=100)}
+tapply(flights$arr_delay,   # the column that we're interested in
+       flights$carrier,     # the column which will specify the break down, 
+                            # in this case we want arr_delay info for each carrier
+       mean                 # the function that we want to use on our data
+       )
+
+tapply(flights$distance, flights$flight, max)
+```
+
+That last one has too much output to digest. Let's look at the top 10.
+
+```{r}
+# calculate info for each flight
+results <- tapply(flights$distance, flights$flight, max)
+# sort the results in decreasing value
+results <- sort(results, decreasing = TRUE)
+# print the first 10 results
+results[1:10]
+```
+
+We can also do that in one step. Let's look at which planes typically have the worst departure delays.
+
+```{r}
+sort(tapply(flights$dep_delay, flights$tailnum, median), decreasing = TRUE)[1:10]
+```
 
