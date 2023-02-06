@@ -16,32 +16,41 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Projects
 
-It's a good idea to work within R projects. R projects allow an efficient way to group your data and code in one place. To create an R project, click "New Project" from the File drop down menu. Select "New Directory" (unless you have an existing one made) and and choose a name for the new folder. This will create new folder with that name and set your working directory to it. You will also notice it created a .Rpoj file of the same name. This file is a shortcut to open RStudio to that project. Rproject directories will also save your history of executed commands, so you can go look back if your ever need to.
+It's a good idea to work within R projects. R projects allow an simple way to group your data and code in one place. To create an R project
+
+1. click `New Project` from the `File` drop down menu
+2. Select `New Directory`, unless you have an existing you'd rather use
+3. Select `New Project` as the type
+3. Choose a name for the new folder and specify the location for it
+4. Click `Create Project`
+
+This will create new folder with that name and set your working directory to it. The working directory is where R will search for files. You will also notice it created a .Rpoj file of the same name. This file is a shortcut to open RStudio to that project with appropriate working directory set. Rproject directories will also save your history of executed commands, so you can go look back if your ever need to.
 
 ### Session Data
 
-When you run code in the R terminal, all your data will be saved in the environment. This allows you to access and use previously created variables.
+When you run code in the R console, all your data will be saved in the environment. This allows you to access and use previously created variables.
 It is a good idea to start each session clean. You will notice that when you exit, R will ask if you want to save a workspace image. You should click "no." 
 
 To stop R from restoring old data:
 
-- Go to `Tools` drop down menu
-
-- Click `Global Options`
-
-- `General` under the `Basic` tab, uncheck "Restore .RData into workspace at startup"
+1. Go to the `Tools` drop down menu
+2. Click `Global Options`
+3. Within the `General` section under the `Basic` tab, uncheck "Restore .RData into workspace at startup"
+4. Click `OK` or `Apply` and close the menu
 
 Why?
 
-- To facilitate better code, since you'll have to rerun it
+- To facilitate better code
+    -  Since you'll have to rerun it each time, you'll need to write clean code
 
 - To clear up unused objects to save storage and stop confusion on what's important
+    - Some old objects could introduce bugs
 
 
 ## Variables and Assignment
 
 Variables store information. You can create a variable by assigning a value to it using the assignment operator: `<-`.
-Using the assignment operator again will overwrite the previous value. You can print a variable using the print function, or just having it on a line by itself.
+Using the assignment operator again will overwrite the previous value. You can print a variable using the `print` function, or just having it on a line by itself.
 
 **Tip** Use descriptive names for your variables and avoid using key words or names of functions.
 
@@ -63,6 +72,10 @@ another_variable
 In R, all basic variables are vectors. The variables we created above were all vectors of length one. We can create longer vectors using the function`c()`
 
 ```{r}
+# a vector of length 1
+vector <- 'value'
+vector
+
 # a vector of length 9
 my_vector <- c(1, 2, 3, 4, 5, 6, 7, 8, 9)
 my_vector
@@ -91,15 +104,13 @@ my_vector[3:7]
 
 ### Data Types
 
-The data types you should be familiar with:
+Values in R each have a type associated with it. Types specify the what kind of information is stored, how it is stored, and what you can do with it. The data types you should be familiar with:
 
 - `numeric` stores number like values: 10, 9.5, -33
-
+    - there are also `int` and `double` types
 - `character` stores words, also known as a string: "R", "programming"
-
 - `logical` stores Boolean data: TRUE, FALSE
-
-- `factor` stores categorical data, also known as enumerated types: "high", "Medium", "low"
+- `factor` stores categorical data, also known as enumerated types: "high", "medium", "low"
 
 #### Factors
 
@@ -116,28 +127,30 @@ class(var)
 var
 ```
 
-Sometimes you will have numeric values that would make more sense as factor value. The rule of thumb is to consider if adding two values "makes sense." For example, you can have a variable called rank with the values 1, 2, and 3. Does rank 1 + rank 2 = rank 3? No, that doesn't make sense. So this should be a factor. Each number represents a different idea.
+Sometimes you will have numeric values that would make more sense as factor values. The rule of thumb is to consider if adding two values "makes sense". For example, you can have a variable called rank with the values 1, 2, and 3. Does rank 1 + rank 2 = rank 3? No, that doesn't make sense. So this should be a factor. Each number represents a different idea or group.
 
-For characters, it can sometimes be trickier. The rule of thumb is to ask if two string with the same characters are unique. For example, say you have data on a whole bunch of people, including their names. You see two first names are the same. Would all people with the name "Sarah" be the same person? No, each "Sarah" is unique, so this should remain a character type.
+For characters, it can sometimes be trickier. The rule of thumb is to ask if two string with the same characters are unique. For example, say you have data on a whole bunch of people, including their names. You see two first names are the same. Would all people with the name "Sarah" be the same person or same group? No, each "Sarah" is unique, so this should remain a character type.
 
-Now suppose you have data a bunch of sports teams. Each team has an associated state. Here, the state names are not unique. If you see a baseball team with state "MI" and a football team with state "MI", the state names are not referencing to unique places. So in this case, it would make sense to convert it to a factor type.
+Now suppose you have data a bunch of sports teams. Each team has an associated state. Here, the state names are not unique. If you see a baseball team with state "MI" and a football team with state "MI", the state names are not referencing two unique places. So in this case, it would make sense to convert it to a factor type.
 
-To sum it up, convert anything you think is talking about groups of things into factors and leave things referring to unique or actual numbers alone.
+To sum it up, convert anything you think is referring to categories of things into factors and leave things referring to unique data or actual numbers alone.
 
 ## Functions
 
-Functions are bits of code that will run when you call them. They often have parameters and can return values.
-Functions are how you will do most things in R. You call a function by using the name followed by parenthesis. Some parameters are optional and can be specified using the name.
+Functions are bits of code that will run when you call them. They usually have parameters and return values.
+Functions are how you will do most things in R. You call a function by using the name followed by parenthesis. Some parameters are optional and can be specified using their name followed by an equals sign and the parameter value.
 
 ```{r}
 # pass the value or object you want to print as the parameter
 print("Hello World")
 
-# log functions excepts two parameters, using the name for the second parameter
+# the log function excepts two parameters,
+# here we use the name for the second parameter
 # it returns a value that we can store
 hundred_log_10 <- log(100, base=10)
 
-# we don't have to use the name for the parameter, as long as we place the values in the correct places
+# we don't have to use the name for the second parameter, 
+# as long as we place the values in the correct places
 # by not storing the value, R will automatically print it
 log(100, 10)
 ```
@@ -155,16 +168,16 @@ log(100, 10)
 
 ## R Packages
 
-There are a lot of built in functions in R at our disposal, but sometimes we need more functionality. This is where packages come in. Packages are basically groups of code, functions, and data that can imported and used. Packages are often written by third parties and need to be downloaded and installed before they can be loaded and used. The most common place to get packages are from CRAN, which is supported by the R Foundation. To install a package, use `install.packages()` and pass a string of the packages name. Example:
+There are a lot of built in functions in R at our disposal, but sometimes we need more functionality. This is where packages come in. Packages are basically groups of code, functions, and data that can imported and used. Packages are often written by third parties and need to be downloaded and installed before they can be loaded and used. The most common place to get packages is CRAN. To install a package, use `install.packages` and pass a string of the package's name. Example:
 
 ```{r eval=FALSE}
 # Install the neuralnet package to get access to many useful neural network functions
 install.packages('neuralnet')
 ```
 
-You only need to install a package once, unless updating, so leave it out of R scripts and Rmd files. Instead, run the `install.packages` command in the console. To automate package installing if giving your Rmd file to another person, you can use the following:
+You only need to install a package once, unless updating, so leave it out of R scripts and Rmd files. Instead, run the `install.packages` command in the console. If you want to automate package installing, for sharing Rmd files and scripts, you can use the following:
 
-```{r}
+```{r eval=FALSE}
 if (!require(tidyverse)) {
     install.packages('tidyverse')
     library(tidyverse)
@@ -175,7 +188,7 @@ The `require` function checks to see the the user has the required library insta
 
 To update a package, just run `install.packages` again.
 
-**Tip** Notice the where strings are used and where they aren't. `install.packages` uses a string to search CRAN for a matching repository (file). `library` does need to use a string, as the 'name' or 'symbol' is available after installation. 
+**Tip** Notice where strings are used and where they aren't. `install.packages` uses a string to search CRAN for a matching repository. `library` doesn't need to use a string, as the 'name' or 'symbol' is available after installation. 
 
 Sometimes different packages have functions with same name. We can specify to R which we are referring to by using a special namespace syntax: `<package name>::<function or data set name>`. Example:
 
@@ -189,6 +202,96 @@ stats::median(flights_df$air_time, na.rm = TRUE)
 ```
 
 **Tip** When you load a package, you don't need to use this syntax unless two functions share the same name and one overwrites the other. You do need to use this syntax for data sets.
+
+# R Markdown
+
+R Markdown is a powerful package that makes your R code presentable. Install it using `install.packages('rmarkdown')`. R Markdown is a type of markdown document. Markdown documents are text documents that have some syntax to make the text more readable. R Markdown also allows the running of R code in your document. This document's source code is in an Rmd file, the file type of R Markdown. Take a look at it to see some of the tools I used to make this document more navigable and readable. This section will cover some of them and a few more I didn't use.
+
+## Table of Contents
+
+Having a table of contents is important for larger reports. At the top of your Rmd file, you can replace the output parameter with:
+
+```
+output: 
+  html_document :
+   toc : true
+   toc_float : true
+```
+
+We are saying the the output will be an html document with a table of contents. I also specify that I want my table of contents to follow the user as he or she scrolls the page. You'll also notice that the table expands and contracts as you scroll. This depth can be controlled with the `toc_depth` parameter, which defaults to 3. You can also give your sections numbers using the `number_sections` parameter.
+
+```
+output: 
+  html_document :
+   toc : true
+   toc_depth : 4
+   number_sections : true 
+```
+
+When using a table of contents, you'll want to use headers. Use `#`'s to specify the depth and size of the header.
+
+```
+# Header 1
+
+## Subsection
+
+### Nested Subsection
+
+#### Further Nesting
+
+# Header 2
+```
+
+## Code Blocks
+
+In R Markdown, put your code in code blocks, called chunks. Code blocks are designated with triple back ticks: \`\`\`. Then to specify the language of that block, use `{ }`. In our case, we will use a set up like so:
+
+    `r ''````{r}
+    <code goes here>
+    `r ''````
+
+**TIP** Use `\` to escape a special character in R Markdown.
+
+R will run all your code in the code blocks when knitting and output the results. There are options you can specify to change this behavior, however. Some options to take note of:
+
+- `eval`
+    - if **FALSE**, the code won't run but the code will still appear in the document
+- `include`
+    - if **FALSE**, the code will run but not appear in the document
+- `echo`
+    - if **FALSE**, the code will run and the output will show, but the code will not show
+- `cache`
+    - if **TRUE**, R will cache the results and use the results for future knits instead of rerunning
+    - The results will be recalculated if the block is edited
+    - Useful for blocks that take a long time to run
+- `error`
+    - if **FALSE**, R will not output error messages generated by the code
+- `message`
+    - if **FALSE**, R will not output any messages generated by the code
+- `warning`
+    - if **FALSE**, R will not output warning messages generated by the code
+
+You can also give you code blocks descriptive names to help find bugs when knitting or for jumping to code. Specify the name after `r` but before the options. Your code block could look something like this:
+
+    `r ''````{r my_chunk, cache=TRUE, error=FALSE, warning=FALSE}
+    <code goes here>
+    `r ''````
+
+### Inline Code Blocks
+
+You can also run tiny bits of code within your write ups. This is useful when talking about a result. Use single back ticks for this followed by an r: \``r` `<your code>` \`. You can use a variable name to get its value or run a function.
+
+## Other Useful Syntax
+
+Use `*` or `_` for italics: \*word\* -> *word*
+
+Use `**` or `__` for bold: \*\*word\*\* -> **word**
+
+Set text for a link using `[<text>](<link>)`: [R Markdown Cheat Sheet](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
+
+Show an image using `![](<file path or link to image>)`: ![](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/R_logo.svg/310px-R_logo.svg.png)
+
+Check the R Markdown [documentation](https://rmarkdown.rstudio.com/articles.html) or this [book](https://bookdown.org/yihui/rmarkdown/) for more R Markdown tips and tricks.
 
 
 # Data and Data Frames
@@ -211,11 +314,9 @@ In either case, we store the result in a variable. The result is a data frame, w
 
 ## Data Frames
 
-Data frames are R's representation a tabular data. It consists of multiple columns of vectors, each of which can be of a different type. Each row in a data frame is one entry.
+Data frames are R's representation a tabular data. It consists of multiple columns, each being a vector. Each column can be a different type. Each row in a data frame represents one entry.
 
-We can explore a data frame using `str` and `summary`:
-
-`str` provides the structure of the data frame. It gives the size of the table (number of rows and number of columns), name of each column, the type of each column, and the first several entries in each column.
+We can explore a data frame using `str` and `summary`. `str` provides the structure of the data frame. It gives the size of the table (number of rows and number of columns), name of each column, the type of each column, and the first several entries in each column.
 
 ```{r}
 str(flights)
@@ -236,11 +337,11 @@ ncol(flights)
 summary(flights)
 ```
 
-For numeric data, we will get the min, max, median, mean, 1st and 3rd quartiles, and number of missing data if applicable. For the character data, we don't get useful data.
+For numeric data, we will get the min, max, median, mean, 1st and 3rd quartiles, and number of missing data if applicable. For the character data, we don't get very useful information. For factors, we'll get the number of entries in each level.
 
 ### Accessing Columns and Rows
 
-There are several ways to access a particular column of a data frame. The first is using square bracket notation `[ ]` with the column name as a string: `df["<column name>"]`. You can also use square bracket notation with a column index instead: `df[<index as an int>]`. This will grab the column at that place. The final way to access columns, and the most used is using the `$` operator followed by the column name: `df$<column name>`. Note, this method doesn't use strings. This way is particularly useful, as it allows RStudio to autocomplete.
+There are several ways to access a particular column of a data frame. The first is using square bracket notation `[ ]` with the column name as a string: `df["<column name>"]`. You can also use square bracket notation with a column index instead: `df[<index as an int>]`. This will grab the column at that place. The final way to access columns, and the most used, is using the `$` operator followed by the column name: `df$<column name>`. Note, this method doesn't use strings. This way is particularly useful, as it allows RStudio to autocomplete.
 
 ```{r R.options=list(max.print=10)}
 # using column name as a string and square brackets
@@ -255,19 +356,60 @@ flights$carrier
 
 Note that `[ ]` notation returns the column as a n x 1 table. `$` notation will return the column as a vector.
 
-You can access rows using a slight variation on square bracket notation.
+You can access rows using a slight variation on square bracket notation. List the row index and then a trailing column. The trailing comma is needed to differentiate between column idexing and row indexing. `df[<row index>, ]`
+
+```{r}
+# retrieving the 98th entry
+flights[98, ]
+```
+
+You can also select multiple rows or columns, either using a list or range. You create a list using the `c` function. You can specify a range like so: `<starting range>:<ending range>`, just like we did with vectors. And just like vectors, you can omit indices using `-`.
+
+```{r R.options=list(max.print=50)}
+# selecting several columns by name
+flights[c('carrier', 'dep_delay', 'arr_delay')]
+
+# selecting several columns by index
+flights[c(6, 3, 5)]
+
+# selecting a range of columns
+flights[2:6]
+
+# omitting a range of columns
+flights[-(1:10)]
+
+# selecting a set of rows
+flights[c(1, 2, 3, 4), ]
+
+# selecting a range of rows
+flights[10:20, ]
+```
+
+One more useful indexing tool is 2D indexing. You can specify both columns and rows using square bracket notation: `df[<rows>, <columns>]`. Or you can a combination of `[ ]` and `$`: `df[<rows>, ]$<column name>` or `df$<column name>[<rows>]`. Note that in the second way, don't use a comma because you are selecting rows from a 1D vector after using the `$` operator.
+
+```{r}
+# using a range of rows and a list of columns
+flights[1:15, c('origin', 'dep_delay')]
+
+# selecting a range of rows from a given column
+flights$distance[1:15]
+
+# selecting column, after selecting a range of rows
+flights[1:15, ]$distance
+```
+
 
 ## Cleaning
 
 ### Deleting Columns
 
-Sometimes, a data set will have columns that have no use to us. One example is an row identifying column, like an index. Identifiers are useful when linking tables together, but once we have all our data, we can just use R row indexing. So we should remove those columns. The `X` column is one example; let's remove it.
+Sometimes, a data set will have columns that have no use to us. One example is a row identifying column, like an index. Identifiers are useful when linking tables together, but once we have all our data, we can just use R row indexing. So we should remove those columns. The `X` column is one example; let's remove it.
 
-Other columns that should be deleted are columns that provide no interesting information. In the above example, all the flights are from the year 2013, so we don't need to keep the year column. Also, this data is limited to the month January, so let's also remove the month column.
+Other columns that should be deleted are columns that provide no interesting information. In the our NYC flights data set, all the flights are from the year 2013 and the month of January, so we don't need to keep the year column nor month column.
 
 Sometimes you might get duplicate data or create new columns based of old ones that better represent the information you need. There could be many reasons to remove a column.
 
-You delete a column by assigning NULL to it: `df$col <- NULL`. Let's get rid of those uneeded columns.
+You delete a column by assigning `NULL` to it: `df$col <- NULL`. Let's get rid of those uneeded columns.
 
 ```{r}
 flights$X <- NULL
@@ -286,15 +428,11 @@ We talked above about factors vs numerica and character types. To reemphasize th
 
 And the rule for character types:
 
-> Is each one unique or represent a group/category?
+> Is each value unique or represent a group/category?
 
 Let's first look at some of the character type columns. `tailnum`  is an identifier for aircraft. If we see two flights with the same tail number, that means they were the same plane. Equal tail numbers are not representing unique things, so that should be grouped. So, this column should be transformed to a factor. Similarly, `carrier`, `origin`, and `dest` are representing groups a possibilities; they should all be factors.
 
-What about some of the numeric types? Let's start with `flight`. Flight numbers are codes used by airlines to identify routes and flights. Would it make sense to add two flight numbers together? No, so therefore they should not stay as number. However, should they be characters or factors? Two flights with the same flight number should be on the same route. Therefore, it would make sense to group flight numbers. However, two different airlines could share flight numbers. In this case, two equal flight numbers would represent two unique pieces of information. Ideally, we would want to group airline and flight number, but we will ignore that for now. Let's make `flight` a factor, since that we be most useful.
-
-What about for day of the month? Does it make sense to add two dates together? Typically, no. So `day` would work better as a factor. `hour` and `minute` have similar arguments, but some numeric operations could be useful. For example, we may want the average 
-
- > TODO
+What about some of the numeric types? Let's start with `flight`. Flight numbers are codes used by airlines to identify routes and flights. Would it make sense to add two flight numbers together? No, so therefore they should not stay as number. What about for day of the month? Does it make sense to add two dates together? Typically, no. So `day` would work better as a factor. `hour` and `minute` have similar arguments, but some numeric operations could be useful. For example, we may want the average hour of departure or earliest departure. Sometimes there is not a hard and fast rule for variable types; it depends on what you want to do with your data. We'll convert those columns to factors because we still have `dep_time` and `arr_time` for arithmetic operations.
 
 To change a column to a factor type, use the `as.factor` command on the column and reassign the output to the same column. Let's edit our data:
 
@@ -320,15 +458,15 @@ str(flights)
 summary(flights)
 ```
 
-We now can see that some of columns give better information than before. We can see how many carriers their are and how many flights each airport receives.
+We now can see that some of columns give better information than before. We can see how many carriers there are and how many flights each airport receives.
 
 ### NA's, NaN, and NULL
 
-`NA` and `NULL` are two special data types in R. NA stands for "not available". We will see this value when ever a row is missing a value in a column. From above, we see that there are `r sum(is.na(flights$air_time))` missing values in `air_time`. 
+`NA` and `NULL` are two special data types in R. `NA` stands for "not available". We will see this value when ever a row is missing a value in a column. From above, we see that there are `r sum(is.na(flights$air_time))` missing values in `air_time`. 
 
-Null represents nothing. Null is the value of no value or non-existence. Be careful though, because while it has a similar concept as zero, zero is a value. Zero represent a count of nothing--or false in Boolean values--while null is no value. In other words, zero is measurable while null is not.
+`NULL` represents nothing. Null is the value of no value or non-existence. Be careful though, because while it has a similar concept as zero, zero is a value. Zero represent a count of nothing--or false in Boolean values--while null is no value. In other words, zero is measurable while null is not.
 
-Null and NA have similar ideas: there is no value. However, there purposes and meaning are different. NA represents an idea of a missing value where there should be one. Null is used where there is no value (i.e., no value exists) and NA is used where there should be a value (i.e., a value exists but it is unknown). `NULL` is also a special keyword representing the NULL object. We used this when deleting columns. We are saying the R, give this column no value; in other words, delete it.
+`NULL` and `NA` have similar ideas: there is no value. However, their purposes and meanings are different. `NA` represents the idea of a missing value where there should be one. `NULL` is used where there is no value (i.e., no value exists) and `NA` is used where there should be a value (i.e., a value exists but it is unknown). `NULL` is also a special keyword representing the null object. We used this when deleting columns. We are saying to R, give this column no value; in other words, delete it.
 
 `NaN` is yet another special value, but only for numeric types. It stands for "Not a Number". It comes up most often when a mathematical formula/algorithm is undefined with certain input. $0/0$ is an undefined equation, so will return `NaN`. Other times, NaN is not useful to statisticians, and the concept of infinity would be better. R also has a special value for this `Inf`. $11/0$ will return `Inf`. `NaN` and `Inf` are numerical types and play with functions in different ways, so be wary of them.
 
@@ -355,7 +493,7 @@ min(-3, 6, NaN)
 max(flights$arr_delay)
 ```
 
-One way is to tell R to ignore NA rows for that specific function. Some functions have a parameter similar to `na.rm` which takes a Bolean value and defaults to `FALSE`. If we pass in `TRUE`, R will omit all NA values in its calculations.
+One way is to tell R to ignore rows with `NA` values for that specific function. Some functions have a parameter similar to `na.rm` which takes a Bolean value and defaults to `FALSE`. If we pass in `TRUE`, R will omit all `NA` values in its calculations.
 
 ```{r}
 max(flights$arr_delay, na.rm = TRUE)
@@ -369,7 +507,7 @@ summary(no_nas)
 nrow(no_nas)
 ```
 
-Notice how many rows we lost: `r nrow(flights) - nrow(no_nas)`. That's a lot of information gone that would've been useful. To keep that information, we can modify our data to fill in those missing values. Sometimes we can go through and manually infer or see what those values should be. Other times, it can suffice to replace NAs with the median or mean of your data. Which one you use depends on what you want to do with your data and the distribution of your data.
+Notice how many rows we lost: `r nrow(flights) - nrow(no_nas)`. That's a lot of information gone that would've been useful. To keep that information, we can modify our data to fill in those missing values. Sometimes we can go through and manually infer or find what those values should be. Other times, it can suffice to replace NAs with the median or mean of your data. Which one you use depends on what you want to do with your data and the distribution of your data.
 
 ```{r}
 # calculate the mean (or median) of the column, omitting the NAs
@@ -411,7 +549,7 @@ Only our categorical data is left with missing values. There is no simple way to
 
 `str` and `summary` give a basic overview of our data, but aren't super useful beyond that. We need to do some deeper exploration to get a better sense of our data and start answering some interesting questions.
 
-`mean`, `median`, `min`, and `max` are all use functions. They each do as their name suggests and can be applied to any numerical vector we want. As seen above, they won't work with NA values present, so either use `na.rm` or clean your data first.
+`mean`, `median`, `min`, and `max` are all useful functions. They each do as their name suggests and can be applied to any numerical vector we want. As seen above, they won't work with NA values present, so either use `na.rm` or clean your data first.
 
 ```{r results='hold'}
 mean(flights$air_time)
@@ -419,6 +557,8 @@ median(flights$air_time)
 min(flights$air_time)
 max(flights$air_time)
 ```
+
+### tapply
 
 This is a good first step, but we what if we want information for each airline? We can use a function called `tapply`, short for table apply, to break down statistics for each category that we want. Let's compute the average arrival delay for each carrier. Let's also look at the farthest each flight has been.
 
@@ -449,3 +589,153 @@ We can also do that in one step. Let's look at which planes typically have the w
 sort(tapply(flights$dep_delay, flights$tailnum, median), decreasing = TRUE)[1:10]
 ```
 
+We could then pass the sorted output of tapply to a plotting function to make a simple visualization. Let's look again at how each arline performs, this time with a visual.
+
+```{r}
+barplot(sort(tapply(flights$arr_delay, flights$carrier, mean)))
+```
+
+### Conditionals, Logical Indexing, and If-Else Statements 
+
+Sometimes we want to explore data based on criteria other than the factors we have available. This where conditionals, Booleans, and logical indexing come in handy.
+
+#### Booleans and Conditonals
+
+A Boolean is a binary type of data that takes on either `TRUE` or `FALSE`. Sometimes you will also see 1 and 0 representing true and false values, respectively. In R, Boolean types are called `logical`.
+
+```{r}
+typeof(TRUE)
+```
+
+A conditional statement is a statement that evaluates to a Boolean value. We use them to make decisions. If the condition is true, do one thing, otherwise do the other thing. We make conditions by using comparison operators:
+
+- `==` equal
+- `!=` not equal
+- `>` greater than
+- `<` less than
+- `>=` greater than or equal to
+- `<=` less than or equal to
+
+```{r}
+# can compare ints and other numericals
+5 == 5.0
+6 > 99
+# camparing strings
+'hello' == "hello"
+# compare lexicographical order, i.e., alphabetical with numbers and symbols
+'abc' < 'dfg'
+# can check a factor level with a string of the matching name
+as.factor('level1') == 'level1'
+```
+
+
+We can than use logical operators to combine conditionals:
+
+Elementwise
+
+- `&` and, TRUE if both elements are true
+- `|` or, TRUE if at least one element is true
+- `!` not, TRUE if the element is false
+
+Statementwise
+
+- `&&` and, TRUE if both statement are true
+- `||` or, TRUE if at least one statement is true
+- `!` not, TRUE if the statement is false
+
+```{r}
+TRUE && FALSE
+5 >= 0 || 'this' == 'that'
+```
+
+You want to use elementwise operators when dealing with vectors.
+
+```{r}
+nums1 <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+nums1 == 4 | nums1 >= 7
+
+# %% is the modulus operator, i.e., remainder division
+nums1 > 5 & nums1 %% 2 == 0
+
+nums2 <- c(1, 2, 33, 44, 5, 6, 77, 8, 99, 10)
+
+nums1 == nums2
+nums1 < nums2
+```
+
+#### Logical Indexing
+
+Sometimes you want a subset of your data based on a set of rules. This is where we would use logical indexing. It is similar to regular indexing, but instead of numerical indexes, we pass a conditional. R will then evaluate that condition on each row and select the ones where it returns true. Because we are selecting rows, remember to use the trailing comma.
+
+```{r R.options=list(max.print=50)}
+flights[flights$origin == 'JFK', ]
+
+flights[flights$origin == 'JFK' & flights$day == 17, ]
+```
+
+We can combine logical indexing with selecting a specific column or columns.
+
+```{r R.options=list(max.print=50)}
+flights[flights$origin == 'JFK' & flights$day == 17, 'arr_delay']
+
+flights[flights$origin == 'JFK' & flights$day == 17, ]$arr_delay
+
+flights[flights$origin == 'JFK' & flights$day == 17, c('dest', 'arr_delay', 'dep_delay')]
+```
+
+#### If-Else
+
+Another use of conditionals is If-Else statement. There are two types of if-else statements in R. The first is an if block. We use this when our code needs to take a different set of actions depending on input. These diferent sets of actions are called branches.
+
+```{r}
+input <- 42
+
+if (input == 42) {
+    'the answer to life'
+} else {
+    'doesn\'t mean anything'
+}
+```
+
+We also can use the `ifelse` function to return a value depending on the input. This is useful when updating columns or creating new ones, like we saw above with data cleaning. 
+
+To create a new column, specify a column like usual, but with a column name that doesn't exist yet, and assign value to it: `df$<new column name> <- <values>`.
+
+We use `ifelse` like so: `ifelse(<test>, <value if true>, <value if false>)`. You can also nest `ifelse` statements.
+
+```{r}
+flights$late <- ifelse(flights$arr_delay > 0, TRUE, FALSE)
+
+flights$arr_type <- ifelse(flights$arr_delay < 0,           # the first test
+                           'early',                         # value if the first test is true
+                           ifelse(flights$arr_delay == 0,   # the second test, checked when the first is false
+                                  'on time',                # value if the second test if true and the first is false
+                                  'late'                    # value if both tests are false
+                                  )
+                           )
+```
+
+## Random Sampling and Testing
+
+When we create models, we want to be able to test them. We need to know if our models are valid or good at predicting. We do this by splitting off a portion of our data for testing. We use one set to train the models, predict the other set, and then compare the predicted value to the true value.
+
+Sometimes our data comes in ordered, so we want to make sure the data in our test set is a random selection. To do this, we use `sample`. This function returns a specified amount of random numbers within a specified range. We use it like so: `sample(<start of range>:<end of range>, <how many numbers we want>)`. For test sets, the start is 1 and the end is the number of rows. The amount can fluctuate, but 10-30% of your data is typically a good amount. You want to make sure there is enough data in your test set to properly evaluate your model.
+
+The output of `sample` is a set of numbers. We will use those numbers as the set of indices to be in out test set. So, we will tell R to put all rows with any of those indices in a test set and every row not in there will be in our train set.
+
+**Tip** Use `set.seed` to set the random seed of R's random number generator. This will make reruns of your random functions deterministic, i.e., have the same output each run. Set the seed again when you want to rerun any random based functions to get the same result, even across machines, typically.
+
+```{r}
+set.seed(12345)
+
+# get a random set of numbers from 1 to the number of rows in out data, we want 20% of the rows
+test_indices <- sample(1:nrow(flights), 0.2 * nrow(flights))
+
+# our test set should consist of all the rows with indices from the sample function
+test_set <- flights[test_indices, ]
+# our train set is anything but those indices
+train_set <- flights[-test_indices, ]
+```
+
+We can then move on with creating our models from the train set and then evaluate them with the test set.
