@@ -302,7 +302,7 @@ Most data you will use in this class will come from csv files. You will read thi
 
 ```{r}
 # reading from a csv
-flights <- read.csv('nycflightsjan13.csv')
+flights <- read.csv('data/nycflightsjan13.csv')
 
 # copying from a package
 flights_from_package <- nycflights13::flights
