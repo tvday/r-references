@@ -1,0 +1,62 @@
+---
+title: "Git and RStudio"
+author: "Thomas Day"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{css, echo=FALSE}
+.figure {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    text-align: center;
+    font-weight: bold;
+}
+
+```
+
+## What is Git?
+
+Git is a version control system that makes collaborating easier and saves backups if you ever lose work or need to roll back. Think like Google Doc's "Version History" but better for coding environments. Usually, each project lies in their own repository--often shortened to repo--which is like the main folder for your project. On your local computer, you can save various versions of your project and roll back if you ever make a big mistake like deleting a huge chunk of code or a file. With integration with GitHub or a similar hosting service, you can store a copy in the cloud and collaborate with a team. There, you can see what changes others have made and merge them into one version. 
+
+We will be dealing with just the basics of Git and GitHub, but you can do a lot with these two tools still. We will also be using Git tools that come with RStudio to make life easier. Everything shown here can also be done using the command line if you are already familiar and prefer.
+
+### How does git work?
+
+As mentioned above, your project sits in a repository, or repo. This repo keeps track of your version history and branches. We don't have to worry about branches in this class since we're dealing with small and simple projects. Each "version" of your repo is set by a *commit*. A commit is a set of changes to files within the repo. All the commits chain together to create a version history for your project.
+
+Locally, each person has a copy of the commit chains on their computer. On GitHub, there is a remote copy of the commit history. When you make changes to your project, you will *add* the changed files then *commit* them to your local repo chain. After this, you will *push* the commit to the remote repo so every can have access to your work. For other to get your changes, they will *pull* from the remote repo. If there ever is conflicting work on the local and remote copies, git will attempt to *merge* the changes together to form a new complete commit; sometimes you may have to manually assist the merge.
+
+With these five operations, you can use git effectively.
+
+## Getting Started
+
+### Downloads
+* First make sure you have R installed: https://cran.rstudio.com/
+* Also ensure you have RStudio: https://rstudio.com/products/rstudio/download/
+* You likely do not have Git installed, so install it from here: https://git-scm.com/downloads and select your operating system
+    * For Mac, select the option under "Binary installer"
+* Finally, make an account on GitHub if you do not already have one: https://github.com/join
+
+### Configuring RStudio for Git
+
+1. Open the `Tools` drop down menu and select `Global Option`
+2. Select the `Git/SVN` tab
+3. Ensure *Enable version control interface for RStudio Projects* is **checked**
+4. The `Git Executable` has the path to your installed Git
+
+You can ignore *SVN* and *RSA*/*SSH*, as those aren't needed for this class. Your settings should look something like this:
+
+![Git Settings](imgs/git_settings.png)
+
+Now you should be all ready to start utilizing Git and GitHub.
+
+
+## Next
+
